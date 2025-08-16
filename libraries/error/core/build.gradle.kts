@@ -9,6 +9,6 @@ android {
 
 kotlin {
     sourceSets.commonMain.dependencies {
-        implementation(projects.libraries.logger.core)
+        implementation(projects.rinneShared.libraries.logger.core)
     }
 }

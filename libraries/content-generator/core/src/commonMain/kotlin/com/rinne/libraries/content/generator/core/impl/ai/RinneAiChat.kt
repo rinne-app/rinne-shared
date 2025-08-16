@@ -21,7 +21,8 @@ internal class RinneAiChatImpl : RinneAiChat {
         return networkProvider.httpClient.post("https://api.openai.com/v1/chat/completions") {
             contentType(ContentType.Application.Json)
             headers {
-                bearerAuth(API_KEY)
+//                TODO
+//                bearerAuth(API_KEY)
             }
             setBody(message.asNetworkRequest(defaultConfig))
         }.body<NetworkAiResponse>().asRinneAiMessageAnswer()

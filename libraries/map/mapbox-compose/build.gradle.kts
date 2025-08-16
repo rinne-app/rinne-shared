@@ -10,8 +10,8 @@ android {
 
 kotlin {
     sourceSets.commonMain.dependencies {
-        api(projects.libraries.map.core)
-        api(projects.libraries.map.mapbox)
+        api(projects.rinneShared.libraries.map.core)
+        api(projects.rinneShared.libraries.map.mapbox)
     }
 
     sourceSets.androidMain.dependencies {

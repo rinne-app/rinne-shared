@@ -9,9 +9,9 @@ android {
 
 kotlin {
     sourceSets.commonMain.dependencies {
-        api(projects.libraries.bookReader.core)
+        api(projects.rinneShared.libraries.bookReader.core)
 
-        implementation(projects.libraries.logger.core)
-        implementation(projects.libraries.serialization.xml)
+        implementation(projects.rinneShared.libraries.logger.core)
+        implementation(projects.rinneShared.libraries.serialization.xml)
     }
 }

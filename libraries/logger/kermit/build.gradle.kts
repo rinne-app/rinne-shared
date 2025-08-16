@@ -11,7 +11,7 @@ android {
 
 kotlin {
     sourceSets.commonMain.dependencies {
-        api(projects.libraries.logger.core)
+        api(projects.rinneShared.libraries.logger.core)
         implementation(libs.kermit)
     }
 }

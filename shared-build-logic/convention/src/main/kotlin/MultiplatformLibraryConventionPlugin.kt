@@ -23,7 +23,7 @@ class MultiplatformLibraryConventionPlugin : Plugin<Project> {
             }
             configureKotlinMultiplatform()
             configureCoroutinesMultiplatform()
-//            if (!target.path.contains("libraries:logger:core")) configureLoggerMultiplatform()
+            if (!target.path.contains("logger:core")) configureLoggerMultiplatform()
         }
     }
 }

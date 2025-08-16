@@ -1,20 +1,16 @@
 package com.rinne.libraries.logger.core
 
 import com.rinne.libraries.logger.core.combined.CombinedRinneLogger
-import com.rinne.libraries.logger.core.impl.RinneLoggerProviderImpl
 import com.rinne.libraries.logger.core.model.RinneLog
 import com.rinne.libraries.logger.core.model.RinneLogType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.ExperimentalTime
 
 interface RinneLogger {
     val logsStateFlow: StateFlow<List<RinneLog>>
@@ -22,6 +18,7 @@ interface RinneLogger {
 
     fun log(log: RinneLog)
 
+    @OptIn(ExperimentalTime::class)
     fun log(
         message: String,
         type: RinneLogType,

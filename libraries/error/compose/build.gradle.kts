@@ -10,8 +10,8 @@ android {
 
 kotlin {
     sourceSets.commonMain.dependencies {
-        api(projects.libraries.text.core)
-        implementation(projects.libraries.error.core)
-        implementation(projects.libraries.logger.core)
+        api(projects.rinneShared.libraries.text.core)
+        implementation(projects.rinneShared.libraries.error.core)
+        implementation(projects.rinneShared.libraries.logger.core)
     }
 }

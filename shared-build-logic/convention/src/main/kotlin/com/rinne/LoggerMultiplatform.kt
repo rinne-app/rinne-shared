@@ -10,7 +10,7 @@ internal fun Project.configureLoggerMultiplatform(
     extensions.configure<KotlinMultiplatformExtension> {
         sourceSets.apply {
             commonMain.dependencies {
-                implementationProject(":libraries:logger:core")
+                implementationProject(":rinne-shared:libraries:logger:core")
             }
         }
     }

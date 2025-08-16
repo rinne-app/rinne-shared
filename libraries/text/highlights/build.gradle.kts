@@ -10,6 +10,6 @@ android {
 
 kotlin {
     sourceSets.commonMain.dependencies {
-        implementation(projects.libraries.text.core)
+        implementation(projects.rinneShared.libraries.text.core)
     }
 }
