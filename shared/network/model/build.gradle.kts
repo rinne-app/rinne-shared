@@ -1,6 +1,6 @@
 plugins {
-    alias(libsBe.plugins.rinne.multiplatform.library)
-    alias(libsBe.plugins.rinne.multiplatform.kotlin.serialization)
+    alias(sharedLibs.plugins.rinne.multiplatform.library)
+    alias(sharedLibs.plugins.rinne.multiplatform.kotlin.serialization)
 }
 
 android {
