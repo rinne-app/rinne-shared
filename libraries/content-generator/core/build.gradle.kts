@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.rinne.multiplatform.library)
-    alias(libs.plugins.rinne.multiplatform.ktor)
+    alias(sharedLibs.plugins.rinne.multiplatform.library)
+    alias(sharedLibs.plugins.rinne.multiplatform.ktor.client)
 }
 
 

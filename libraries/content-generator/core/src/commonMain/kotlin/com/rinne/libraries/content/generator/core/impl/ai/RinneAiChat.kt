@@ -7,10 +7,12 @@ import io.ktor.http.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-internal class RinneAiChatImpl : RinneAiChat {
+internal class RinneAiChatImpl(
+    defaultConfig: RinneAiConfig,
+) : RinneAiChat {
     private val networkProvider by lazy<RinneAiChatNetworkProvider> { RinneAiChatNetworkProviderImpl() }
 
-    override var defaultConfig: RinneAiConfig = RinneAiConfig(RinneAiModel.default)
+    override var defaultConfig: RinneAiConfig = defaultConfig
         private set
 
     override fun updateDefaultConfig(config: RinneAiConfig) {
@@ -21,8 +23,7 @@ internal class RinneAiChatImpl : RinneAiChat {
         return networkProvider.httpClient.post("https://api.openai.com/v1/chat/completions") {
             contentType(ContentType.Application.Json)
             headers {
-//                TODO
-//                bearerAuth(API_KEY)
+                bearerAuth(defaultConfig.apiKey)
             }
             setBody(message.asNetworkRequest(defaultConfig))
         }.body<NetworkAiResponse>().asRinneAiMessageAnswer()

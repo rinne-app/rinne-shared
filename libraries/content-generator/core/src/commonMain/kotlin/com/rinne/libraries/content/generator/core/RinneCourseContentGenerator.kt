@@ -31,12 +31,12 @@ interface RinneCourseContentGenerator {
     ): List<RinneAiCourseExercise>
 
     companion object {
-        fun Default() = RinneAiCourseContentGenerator()
+        fun Default(apiKey: String) = RinneAiCourseContentGenerator(RinneAiChat.Default(apiKey))
     }
 }
 
 class RinneAiCourseContentGenerator(
-    private val aiChat: RinneAiChat = RinneAiChat.Default(),
+    private val aiChat: RinneAiChat,
 ) : RinneCourseContentGenerator {
     //TODO
     private val json: Json by lazy { RinneAiChatNetworkProviderImpl().json }

@@ -11,7 +11,8 @@ interface RinneAiChat {
     suspend fun sendMessage(message: RinneAiChatMessage): RinneAiMessageAnswer
 
     companion object {
-        fun Default(): RinneAiChat = RinneAiChatImpl()
+        fun Default(apiKey: String): RinneAiChat = Default(RinneAiConfig(apiKey))
+        fun Default(defaultConfig: RinneAiConfig): RinneAiChat = RinneAiChatImpl(defaultConfig)
     }
 }
 
@@ -40,7 +41,8 @@ data class RinneAiMessage(
 )
 
 data class RinneAiConfig(
-    val model: RinneAiModel,
+    val apiKey: String,
+    val model: RinneAiModel = RinneAiModel.default,
 )
 
 
