@@ -25,6 +25,7 @@ data class NetworkTask(
     @SerialName("name") val name: String,
     @SerialName("description") val description: String,
     @SerialName("status") val status: NetworkTasksStatusInfo,
+    @SerialName("availableStatuses") val availableStatuses: List<NetworkTasksStatusInfo>,
     @SerialName("group") val group: NetworkTasksGroupInfo,
 )
 
