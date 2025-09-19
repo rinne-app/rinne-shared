@@ -3,6 +3,7 @@ package com.rinne.libraries.content.generator.core.impl.ai
 import com.rinne.libraries.content.generator.core.impl.RineContentGeneratorLogger
 import com.rinne.libraries.logger.core.extensions.i
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
@@ -16,6 +17,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.URLProtocol.Companion.HTTPS
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.io.IOException
 import kotlinx.serialization.json.Json
 import kotlin.time.Duration.Companion.minutes
 
@@ -60,6 +62,19 @@ internal class RinneAiChatNetworkProviderImpl() : RinneAiChatNetworkProvider {
                 requestTimeoutMillis = 10.minutes.inWholeMilliseconds
                 connectTimeoutMillis = 10.minutes.inWholeMilliseconds
             }
+
+            install(HttpRequestRetry) {
+                maxRetries = 3 // количество попыток
+                delayMillis { retry ->
+                    1.minutes.inWholeMilliseconds * retry // 2 секунды * номер попытки
+                }
+
+                retryOnExceptionIf { _, cause ->
+                    cause is IOException || cause is io.ktor.serialization.JsonConvertException
+                }
+                retryOnServerErrors(maxRetries = 3)
+            }
+
             install(Logging) {
                 level = LogLevel.ALL
                 logger = object : Logger {

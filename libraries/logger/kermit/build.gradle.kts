@@ -1,7 +1,5 @@
 plugins {
-    alias(libs.plugins.rinne.multiplatform.library)
-    alias(libs.plugins.rinne.multiplatform.koin)
-    alias(libs.plugins.rinne.multiplatform.ktor)
+    alias(sharedLibs.plugins.rinne.multiplatform.library)
 }
 
 
@@ -12,6 +10,6 @@ android {
 kotlin {
     sourceSets.commonMain.dependencies {
         api(projects.rinneShared.libraries.logger.core)
-        implementation(libs.kermit)
+        implementation(sharedLibs.kermit)
     }
 }

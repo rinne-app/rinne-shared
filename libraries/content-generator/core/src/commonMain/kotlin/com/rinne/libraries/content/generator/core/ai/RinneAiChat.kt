@@ -24,7 +24,7 @@ sealed interface RinneAiModel {
     data object ChatGpt4o : ChatGptModel
 
     companion object {
-        val default = ChatGpt5mini
+        val default = ChatGpt4oMini
     }
 }
 

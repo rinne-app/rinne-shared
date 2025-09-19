@@ -1,5 +1,6 @@
 package com.rinne.shared.network.model.courses
 
+import com.rinne.shared.network.model.NetworkLanguageInfo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -8,9 +9,23 @@ data class NetworkCourseDetails(
     @SerialName("id") val id: String,
     @SerialName("name") val name: String,
     @SerialName("cover_url") val coverUrl: String,
+    @SerialName("language_info") val languageInfo: NetworkCourseLanguageInfo,
     @SerialName("access_status") val accessStatus: NetworkCourseAccessStatus = NetworkCourseAccessStatus(),
     @SerialName("progress_status") val progressStatus: NetworkCourseProgressStatus = NetworkCourseProgressStatus(),
     @SerialName("sections") val sections: List<NetworkCourseSection> = emptyList(),
+
+)
+
+@Serializable
+data class NetworkCourseLanguageInfo(
+    @SerialName("target_language") val targetLanguage: NetworkLanguageInfo,
+    @SerialName("content_language") val contentLanguage: NetworkLanguageInfo,
+)
+
+@Serializable
+data class NetworkAddCourseRequest(
+    @SerialName("target_language") val targetLanguage: String,
+    @SerialName("content_language") val contentLanguage: String,
 )
 
 @Serializable
