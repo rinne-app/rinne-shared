@@ -33,7 +33,6 @@ data class NetworkEditTask(
     @SerialName("name") val name: String,
     @SerialName("description") val description: String,
     @SerialName("statusId") val statusId: String,
-    @SerialName("groupId") val groupId: String,
 )
 
 @Serializable
