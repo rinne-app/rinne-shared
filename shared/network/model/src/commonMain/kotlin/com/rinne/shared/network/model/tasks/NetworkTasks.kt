@@ -29,6 +29,14 @@ data class NetworkTask(
 )
 
 @Serializable
+data class NetworkEditTask(
+    @SerialName("name") val name: String,
+    @SerialName("description") val description: String,
+    @SerialName("statusId") val statusId: String,
+    @SerialName("groupId") val groupId: String,
+)
+
+@Serializable
 data class NetworkTaskInfo(
     @SerialName("id") val id: String,
     @SerialName("name") val name: String,
