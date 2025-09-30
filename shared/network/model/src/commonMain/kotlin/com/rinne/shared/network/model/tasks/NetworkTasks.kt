@@ -7,9 +7,14 @@ import kotlinx.serialization.Serializable
 data class NetworkTasksGroup(
     @SerialName("id") val id: String,
     @SerialName("name") val name: String,
+    @SerialName("type") val type: NetworkTasksGroupType,
     @SerialName("tasks") val tasks: List<NetworkTaskInfo>,
     @SerialName("availableStatuses") val availableStatuses: List<NetworkTasksStatusInfo>,
 )
+
+enum class NetworkTasksGroupType {
+    UNSORTED, DEFAULT
+}
 
 @Serializable
 data class NetworkTasksGroupInfo(
@@ -33,7 +38,7 @@ data class NetworkTask(
 data class NetworkEditTask(
     @SerialName("name") val name: String,
     @SerialName("description") val description: String,
-    @SerialName("statusId") val statusId: String,
+    @SerialName("statusId") val statusId: String?,
 )
 
 @Serializable
@@ -73,7 +78,6 @@ enum class NetworkTaskStatusType {
 
     companion object
 }
-
 
 fun NetworkTaskStatusType.Companion.valueOfOrCustom(name: String): NetworkTaskStatusType {
     return NetworkTaskStatusType.entries.firstOrNull { it.name == name } ?: NetworkTaskStatusType.CUSTOM
