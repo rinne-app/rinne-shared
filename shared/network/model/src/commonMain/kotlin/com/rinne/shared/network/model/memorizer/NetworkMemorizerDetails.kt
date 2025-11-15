@@ -115,7 +115,6 @@ data class NetworkMemorizerCardDetails(
     @SerialName("status") val status: NetworkMemorizerCardStatus,
     @SerialName("setInfo") val setInfo: NetworkMemorizerSetInfo? = null,
     @SerialName("associations") val associations: List<NetworkMemorizerCardAssociation> = emptyList(),
-    @SerialName("notes") val notes: List<NetworkMemorizerCardNoteInfo> = emptyList(),
 )
 
 @Serializable
