@@ -43,6 +43,10 @@ data class NetworkMemorizerSetFolderType(
     init {
         if (type == NetworkMemorizerSetFolderTypes.CUSTOM) requireNotNull(name)
     }
+
+    companion object {
+        val unsorted = NetworkMemorizerSetFolderType(NetworkMemorizerSetFolderTypes.UNSORTED)
+    }
 }
 
 enum class NetworkMemorizerSetFolderTypes {
@@ -65,6 +69,10 @@ data class NetworkMemorizerFolderType(
 ) {
     init {
         if (type == NetworkMemorizerFolderTypes.CUSTOM) requireNotNull(name)
+    }
+
+    companion object {
+        val unsorted = NetworkMemorizerFolderType(NetworkMemorizerFolderTypes.UNSORTED)
     }
 }
 
@@ -103,9 +111,9 @@ data class NetworkMemorizerCardNoteDetails(
 @Serializable
 data class NetworkMemorizerCardDetails(
     @SerialName("info") val info: NetworkMemorizerCardInfo,
+    @SerialName("level") val level: NetworkMemorizerCardLevel,
+    @SerialName("status") val status: NetworkMemorizerCardStatus,
     @SerialName("setInfo") val setInfo: NetworkMemorizerSetInfo? = null,
-    @SerialName("level") val level: NetworkMemorizerCardLevel? = null,
-    @SerialName("status") val status: NetworkMemorizerCardStatus? = null,
     @SerialName("associations") val associations: List<NetworkMemorizerCardAssociation> = emptyList(),
 )
 
@@ -113,13 +121,34 @@ data class NetworkMemorizerCardDetails(
 data class NetworkMemorizerCardLevel(
     @SerialName("id") val id: String,
     @SerialName("name") val name: String,
-)
+) {
+    companion object {
+        val languageDefault = listOf(
+            NetworkMemorizerCardLevel("A1", "A1"),
+            NetworkMemorizerCardLevel("A2", "A2"),
+            NetworkMemorizerCardLevel("B1", "B1"),
+            NetworkMemorizerCardLevel("B2", "B2"),
+            NetworkMemorizerCardLevel("C1", "C1"),
+            NetworkMemorizerCardLevel("C2", "C2"),
+        )
+    }
+}
 
 @Serializable
 data class NetworkMemorizerCardStatus(
     @SerialName("id") val id: String,
     @SerialName("name") val name: String,
-)
+) {
+    companion object {
+        val default = listOf(
+            NetworkMemorizerCardStatus("New", "New"),
+            NetworkMemorizerCardStatus("Weak Learning", "Weak Learning"),
+            NetworkMemorizerCardStatus("Moderate Learning", "Moderate Learning"),
+            NetworkMemorizerCardStatus("Strong Remembered", "Strong Remembered"),
+            NetworkMemorizerCardStatus("Excellent Mastered", "Excellent Mastered"),
+        )
+    }
+}
 
 @Serializable
 data class NetworkMemorizerCardAssociation(
