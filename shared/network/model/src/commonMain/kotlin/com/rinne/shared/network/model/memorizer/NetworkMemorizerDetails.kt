@@ -20,6 +20,7 @@ data class NetworkMemorizerSetInfo(
     @SerialName("levels") val levels: List<NetworkMemorizerCardLevel> = emptyList(),
     @SerialName("statuses") val statuses: List<NetworkMemorizerCardStatus> = emptyList(),
     @SerialName("associations") val associations: List<NetworkMemorizerCardAssociation> = emptyList(),
+    @SerialName("folders") val folders: List<NetworkMemorizerSetFolderInfo> = emptyList(),
 )
 
 @Serializable
@@ -33,6 +34,11 @@ data class NetworkMemorizerSetFolder(
     @SerialName("id") val id: String,
     @SerialName("type") val type: NetworkMemorizerSetFolderType,
     @SerialName("cards") val cards: List<NetworkMemorizerCardInfo> = emptyList(),
+)
+@Serializable
+data class NetworkMemorizerSetFolderInfo(
+    @SerialName("id") val id: String,
+    @SerialName("type") val type: NetworkMemorizerSetFolderType,
 )
 
 @Serializable
