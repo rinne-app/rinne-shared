@@ -107,14 +107,14 @@ data class NetworkMemorizerCardInfo(
 
 @Serializable
 data class NetworkMemorizerCardSessionInfo(
-    @SerialName("dateTime") val dateTime: LocalDateTime,
+    @SerialName("dateTime") val dateTime: String,
     @SerialName("grade") val grade: Int,
 )
 
 @Serializable
 data class NetworkSaveMemorizerCardSession(
     @SerialName("cardId") val cardId: String,
-    @SerialName("dateTime") val dateTime: LocalDateTime,
+    @SerialName("dateTime") val dateTime: String,
     @SerialName("grade") val grade: Int,
 )
 
