@@ -1,5 +1,6 @@
 package com.rinne.shared.network.model.memorizer
 
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -35,6 +36,7 @@ data class NetworkMemorizerSetFolder(
     @SerialName("type") val type: NetworkMemorizerSetFolderType,
     @SerialName("cards") val cards: List<NetworkMemorizerCardInfo> = emptyList(),
 )
+
 @Serializable
 data class NetworkMemorizerSetFolderInfo(
     @SerialName("id") val id: String,
@@ -98,7 +100,22 @@ data class NetworkMemorizerCardInfo(
     @SerialName("id") val id: String,
     @SerialName("front") val front: String,
     @SerialName("back") val back: String,
+    @SerialName("priority") val priority: NetworkMemorizerCardPriority,
+    @SerialName("sessions") val sessions: List<NetworkMemorizerCardSessionInfo> = emptyList(),
     @SerialName("notes") val notes: List<NetworkMemorizerCardNoteInfo> = emptyList(),
+)
+
+@Serializable
+data class NetworkMemorizerCardSessionInfo(
+    @SerialName("dateTime") val dateTime: LocalDateTime,
+    @SerialName("grade") val grade: Int,
+)
+
+@Serializable
+data class NetworkSaveMemorizerCardSession(
+    @SerialName("cardId") val cardId: String,
+    @SerialName("dateTime") val dateTime: LocalDateTime,
+    @SerialName("grade") val grade: Int,
 )
 
 @Serializable
@@ -121,21 +138,23 @@ data class NetworkMemorizerCardDetails(
     @SerialName("status") val status: NetworkMemorizerCardStatus,
     @SerialName("setInfo") val setInfo: NetworkMemorizerSetInfo? = null,
     @SerialName("associations") val associations: List<NetworkMemorizerCardAssociation> = emptyList(),
+    @SerialName("sessions") val sessions: List<NetworkMemorizerCardSessionInfo> = emptyList(),
 )
 
 @Serializable
 data class NetworkMemorizerCardLevel(
     @SerialName("id") val id: String,
     @SerialName("name") val name: String,
+    @SerialName("value") val value: Int,
 ) {
     companion object {
         val languageDefault = listOf(
-            NetworkMemorizerCardLevel("A1", "A1"),
-            NetworkMemorizerCardLevel("A2", "A2"),
-            NetworkMemorizerCardLevel("B1", "B1"),
-            NetworkMemorizerCardLevel("B2", "B2"),
-            NetworkMemorizerCardLevel("C1", "C1"),
-            NetworkMemorizerCardLevel("C2", "C2"),
+            NetworkMemorizerCardLevel("A1", "A1", 1),
+            NetworkMemorizerCardLevel("A2", "A2", 2),
+            NetworkMemorizerCardLevel("B1", "B1", 3),
+            NetworkMemorizerCardLevel("B2", "B2", 4),
+            NetworkMemorizerCardLevel("C1", "C1", 5),
+            NetworkMemorizerCardLevel("C2", "C2", 6),
         )
     }
 }
@@ -144,14 +163,15 @@ data class NetworkMemorizerCardLevel(
 data class NetworkMemorizerCardStatus(
     @SerialName("id") val id: String,
     @SerialName("name") val name: String,
+    @SerialName("value") val value: Int,
 ) {
     companion object {
         val default = listOf(
-            NetworkMemorizerCardStatus("New", "New"),
-            NetworkMemorizerCardStatus("Weak Learning", "Weak Learning"),
-            NetworkMemorizerCardStatus("Moderate Learning", "Moderate Learning"),
-            NetworkMemorizerCardStatus("Strong Remembered", "Strong Remembered"),
-            NetworkMemorizerCardStatus("Excellent Mastered", "Excellent Mastered"),
+            NetworkMemorizerCardStatus("New", "New", 1),
+            NetworkMemorizerCardStatus("Learning", "Learning", 2),
+            NetworkMemorizerCardStatus("Relearning", "Relearning", 3),
+            NetworkMemorizerCardStatus("Review", "Review", 4),
+            NetworkMemorizerCardStatus("Suspended", "Suspended", -1),
         )
     }
 }
@@ -160,4 +180,9 @@ data class NetworkMemorizerCardStatus(
 data class NetworkMemorizerCardAssociation(
     @SerialName("id") val id: String,
     @SerialName("name") val name: String,
+)
+
+@Serializable
+data class NetworkMemorizerCardPriority(
+    @SerialName("value") val value: Int,
 )
