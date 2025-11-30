@@ -1,6 +1,5 @@
 package com.rinne.shared.network.model.memorizer
 
-import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -100,6 +99,8 @@ data class NetworkMemorizerCardInfo(
     @SerialName("id") val id: String,
     @SerialName("front") val front: String,
     @SerialName("back") val back: String,
+    @SerialName("level") val level: NetworkMemorizerCardLevel,
+    @SerialName("associations") val associations: List<NetworkMemorizerCardAssociation> = emptyList(),
     @SerialName("priority") val priority: NetworkMemorizerCardPriority,
     @SerialName("sessions") val sessions: List<NetworkMemorizerCardSessionInfo> = emptyList(),
     @SerialName("notes") val notes: List<NetworkMemorizerCardNoteInfo> = emptyList(),
