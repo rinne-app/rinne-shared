@@ -1,12 +1,12 @@
+import com.rinne.extensions.rinneAndroid
+
 plugins {
     alias(libs.plugins.rinne.multiplatform.library)
     alias(libs.plugins.rinne.multiplatform.compose)
 }
 
 
-android {
-    namespace = "com.rinne.libraries.error.compose"
-}
+rinneAndroid("com.rinne.libraries.error.compose")
 
 kotlin {
     sourceSets.commonMain.dependencies {

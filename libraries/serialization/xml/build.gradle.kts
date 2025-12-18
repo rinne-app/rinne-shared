@@ -1,11 +1,11 @@
+import com.rinne.extensions.rinneAndroid
+
 plugins {
     alias(libs.plugins.rinne.multiplatform.library)
 }
 
 
-android {
-    namespace = "com.rinne.libraries.serialization.xml"
-}
+rinneAndroid("com.rinne.libraries.serialization.xml")
 
 kotlin {
     sourceSets.commonMain.dependencies {}

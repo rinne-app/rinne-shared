@@ -1,11 +1,11 @@
+import com.rinne.extensions.rinneAndroid
+
 plugins {
     alias(libs.plugins.rinne.multiplatform.library)
 }
 
 
-android {
-    namespace = "com.rinne.libraries.di.core"
-}
+rinneAndroid("com.rinne.libraries.di.core")
 
 kotlin {
     sourceSets.commonMain.dependencies {}

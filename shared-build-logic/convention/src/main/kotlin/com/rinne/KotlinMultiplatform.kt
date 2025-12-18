@@ -1,13 +1,14 @@
 package com.rinne
 
 import com.rinne.extensions.libs
+import com.rinne.extensions.shouldEnableAndroid
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
 
-internal fun Project.configureKotlinMultiplatform() {
+internal fun Project.configureKotlinMultiplatform(includeAndroid: Boolean = shouldEnableAndroid()) {
     with(pluginManager) {
         apply(libs.findPlugin("kotlin-multiplatform").get().get().pluginId)
     }
@@ -17,8 +18,10 @@ internal fun Project.configureKotlinMultiplatform() {
 
         jvm("desktop")
 
-        androidTarget {
-            instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
+        if (includeAndroid) {
+            androidTarget {
+                instrumentedTestVariant.sourceSetTree.set(KotlinSourceSetTree.test)
+            }
         }
 
         listOf(

@@ -1,12 +1,12 @@
+import com.rinne.extensions.rinneAndroid
+
 plugins {
     alias(libs.plugins.rinne.multiplatform.library)
     alias(libs.plugins.rinne.multiplatform.compose)
 }
 
 
-android {
-    namespace = "com.rinne.libraries.reader.markdown"
-}
+rinneAndroid("com.rinne.libraries.reader.markdown")
 
 kotlin {
     sourceSets.commonMain.dependencies {

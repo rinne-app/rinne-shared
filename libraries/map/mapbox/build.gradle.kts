@@ -1,12 +1,12 @@
+import com.rinne.extensions.rinneAndroid
+
 plugins {
     alias(libs.plugins.rinne.multiplatform.library)
     alias(libs.plugins.rinne.multiplatform.compose)
 }
 
 
-android {
-    namespace = "com.rinne.libraries.map.mapbox"
-}
+rinneAndroid("com.rinne.libraries.map.mapbox")
 
 kotlin {
     sourceSets.commonMain.dependencies {
