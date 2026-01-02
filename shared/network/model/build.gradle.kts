@@ -1,8 +1,8 @@
+import com.rinne.extensions.rinneAndroid
+
 plugins {
     alias(sharedLibs.plugins.rinne.multiplatform.library)
     alias(sharedLibs.plugins.rinne.multiplatform.kotlin.serialization)
 }
 
-android {
-    namespace = "com.rinne.shared.network.model"
-}
+rinneAndroid("com.rinne.shared.network.model")

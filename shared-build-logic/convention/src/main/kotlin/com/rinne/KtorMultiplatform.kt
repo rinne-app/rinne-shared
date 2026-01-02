@@ -1,11 +1,14 @@
 package com.rinne
 
 import com.rinne.extensions.libs
+import com.rinne.extensions.shouldEnableAndroid
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-internal fun Project.configureKtorClientMultiplatform() {
+internal fun Project.configureKtorClientMultiplatform(
+    includeAndroid: Boolean = shouldEnableAndroid()
+) {
     extensions.configure<KotlinMultiplatformExtension> {
         sourceSets.apply {
             commonMain.dependencies {
@@ -16,7 +19,7 @@ internal fun Project.configureKtorClientMultiplatform() {
                 implementation(libs.findLibrary("ktor-client-logging").get())
             }
 
-            androidMain.dependencies {
+            if (includeAndroid) androidMain.dependencies {
                 implementation(libs.findLibrary("ktor-client-okhttp").get())
             }
 

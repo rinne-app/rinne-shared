@@ -4,16 +4,18 @@ import com.rinne.configureCoroutinesMultiplatform
 import com.rinne.configureKoinMultiplatform
 import com.rinne.configureKotlinMultiplatform
 import com.rinne.extensions.libs
+import com.rinne.extensions.shouldEnableAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
 class MultiplatformCoreConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
+        val includeAndroid = target.shouldEnableAndroid()
         with(target) {
             pluginManager.apply {
                 apply(libs.findPlugin("multiplatform").get().get().pluginId)
-                apply(libs.findPlugin("android-library").get().get().pluginId)
+                if (includeAndroid) apply(libs.findPlugin("android-library").get().get().pluginId)
             }
 
             extensions.configure<LibraryExtension> {
