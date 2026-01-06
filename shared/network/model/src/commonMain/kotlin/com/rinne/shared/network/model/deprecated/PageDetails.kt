@@ -1,6 +1,6 @@
 package com.rinne.shared.network.model.deprecated
 
-import kotlinx.datetime.LocalDateTime
+import com.rinne.libraries.date.time.core.RinneDateTime
 
 data class PageDetails(
     val id: String,
@@ -35,7 +35,7 @@ data class RelationshipType(
 )
 
 sealed interface PageFilters {
-    data class DateTime(val data: LocalDateTime) : PageFilters
+    data class DateTime(val data: RinneDateTime) : PageFilters
     data class Location(val latLng: RinneLatLng) : PageFilters
 }
 

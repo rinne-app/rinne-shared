@@ -11,7 +11,7 @@ fun <T> RinneRefreshableResultUiState(
     mutableAppResult: MutableRinneResult<T> = MutableRinneResult(),
     defaultState: RinneResultState<T> = mutableAppResult.state,
     withLoader: Boolean = true,
-): RinneRefreshableResultUiState<T> = RinneRefreshableResultUiStateImpl(
+): MutableRinneRefreshableResultUiState<T> = RinneRefreshableResultUiStateImpl(
     RinneResultUiState(mutableAppResult, defaultState, withLoader)
 )
 
@@ -21,3 +21,6 @@ interface RinneRefreshableResultUiState<T> : RinneResultUiState<T> {
 
     suspend fun refresh()
 }
+
+@Stable
+interface MutableRinneRefreshableResultUiState<T> : RinneRefreshableResultUiState<T>, MutableRinneResultUiState<T>

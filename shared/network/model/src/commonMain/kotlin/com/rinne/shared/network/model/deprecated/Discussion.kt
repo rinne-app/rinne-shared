@@ -1,6 +1,6 @@
 package com.rinne.shared.network.model.deprecated
 
-import kotlinx.datetime.LocalDateTime
+import com.rinne.libraries.date.time.core.RinneDateTime
 
 data class Discussion(
     val id: String,
@@ -12,6 +12,6 @@ data class DiscussionComment(
     val authorInfo: ProfileInfo,
     val text: String,
     val rating: String,
-    val dateTime: LocalDateTime,
+    val dateTime: RinneDateTime,
     val answers: List<DiscussionComment>,
 )

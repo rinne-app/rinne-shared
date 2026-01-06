@@ -1,19 +1,13 @@
 package com.rinne.libraries.tts.core
 
 import androidx.compose.runtime.Composable
+import com.rinne.libraries.locale.core.RinneLocale
 import org.koin.core.Koin
-
-//TODO
-enum class RinneTtsLanguage {
-    ENGLISH,
-    GERMAN,
-    RUSSIAN,
-}
 
 internal expect fun createDefaultTtsManager(context: RinneTtsManagerContext): RinneTtsManager
 
 interface RinneTtsManager {
-    fun setLanguage(language: RinneTtsLanguage)
+    fun setLanguage(locale: RinneLocale)
     fun setText(text: String?)
     fun play()
     suspend fun playWithDelay(text: List<String>)
@@ -22,6 +16,14 @@ interface RinneTtsManager {
     companion object {
         @Suppress("FunctionName")
         fun Default(context: RinneTtsManagerContext) = createDefaultTtsManager(context)
+
+        val empty = object : RinneTtsManager {
+            override fun setLanguage(locale: RinneLocale) {}
+            override fun setText(text: String?) {}
+            override fun play() {}
+            override suspend fun playWithDelay(text: List<String>) {}
+            override fun stop() {}
+        }
     }
 }
 

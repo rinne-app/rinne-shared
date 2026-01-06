@@ -1,20 +1,15 @@
 package com.rinne.libraries.error.compose.result.impl
 
 import androidx.compose.runtime.Stable
+import com.rinne.libraries.error.compose.result.MutableRinneResultUiState
 import com.rinne.libraries.error.compose.result.RinneResultUi
-import com.rinne.libraries.error.compose.result.RinneResultUiState
 import com.rinne.libraries.error.core.asRinneException
 import com.rinne.libraries.error.core.result.MutableRinneResult
 import com.rinne.libraries.error.core.result.RinneResultState
 import com.rinne.libraries.error.core.result.state
-import com.rinne.libraries.logger.core.RootRinneLogger
-import com.rinne.libraries.logger.core.extensions.i
-import kotlinx.coroutines.AbstractCoroutine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 
@@ -24,7 +19,8 @@ internal class RinneResultUiStateImpl<T>(
     private val defaultState: RinneResultState<T> = mutableAppResult.state,
     private val withLoader: Boolean = true, //TODO improve
     private val coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob()), //TODO
-) : RinneResultUiState<T> {
+) : MutableRinneResultUiState<T> {
+
     override val stateFlow = mutableAppResult
         .stateFlow
         .scan<RinneResultState<T>, RinneResultUi<T>>(RinneResultUi.Loading) { old, new ->
@@ -48,7 +44,7 @@ private fun <T> RinneResultState<T>.asUi(
 ): RinneResultUi<T> {
     return when (this) {
         is RinneResultState.Error -> RinneResultUi.Error(error.asRinneException())
-        RinneResultState.Loading -> when {
+        RinneResultState.Loading, RinneResultState.None -> when {
             !withLoader && old != null -> old
             old is RinneResultUi.Success -> RinneResultUi.Updating(old.data)
             else -> RinneResultUi.Loading

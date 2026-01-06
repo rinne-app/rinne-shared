@@ -1,10 +1,8 @@
-import com.android.build.gradle.LibraryExtension
-import com.rinne.RinneAppInfo
-import com.rinne.configureCoroutinesMultiplatform
-import com.rinne.configureKoinMultiplatform
-import com.rinne.configureKotlinMultiplatform
-import com.rinne.extensions.libs
-import com.rinne.extensions.shouldEnableAndroid
+import com.rinne.shared.configureCoroutinesMultiplatform
+import com.rinne.shared.configureKoinMultiplatform
+import com.rinne.shared.configureKotlinMultiplatform
+import com.rinne.shared.extensions.sharedLibs
+import com.rinne.shared.extensions.shouldEnableAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -14,14 +12,8 @@ class MultiplatformCoreConventionPlugin : Plugin<Project> {
         val includeAndroid = target.shouldEnableAndroid()
         with(target) {
             pluginManager.apply {
-                apply(libs.findPlugin("multiplatform").get().get().pluginId)
-                if (includeAndroid) apply(libs.findPlugin("android-library").get().get().pluginId)
-            }
-
-            extensions.configure<LibraryExtension> {
-                compileSdk = RinneAppInfo.Android.targetSdk
-                defaultConfig.targetSdk = RinneAppInfo.Android.targetSdk
-                defaultConfig.minSdk = RinneAppInfo.Android.minSdk
+                apply(sharedLibs.findPlugin("multiplatform").get().get().pluginId)
+                if (includeAndroid) apply(sharedLibs.findPlugin("android-library").get().get().pluginId)
             }
 
             configureKotlinMultiplatform()

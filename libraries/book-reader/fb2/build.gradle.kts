@@ -1,13 +1,12 @@
+import com.rinne.shared.extensions.rinneAndroid
+
 plugins {
-    alias(libs.plugins.rinne.multiplatform.library)
+    alias(sharedLibs.plugins.rinne.multiplatform.library)
 }
 
-
-android {
-    namespace = "com.rinne.libraries.book.reader.fb2"
-}
 
 kotlin {
+    rinneAndroid("com.rinne.libraries.book.reader.fb2")
     sourceSets.commonMain.dependencies {
         api(projects.rinneShared.libraries.bookReader.core)
 

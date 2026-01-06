@@ -1,15 +1,13 @@
 package com.rinne.libraries.logger.core
 
+import com.rinne.libraries.date.time.core.RinneDateTime
 import com.rinne.libraries.logger.core.combined.CombinedRinneLogger
+import com.rinne.libraries.logger.core.impl.RinneRootDefaultLogger
 import com.rinne.libraries.logger.core.model.RinneLog
 import com.rinne.libraries.logger.core.model.RinneLogType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.StateFlow
-import kotlin.time.Clock
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import kotlin.time.ExperimentalTime
 
 interface RinneLogger {
@@ -23,13 +21,12 @@ interface RinneLogger {
         message: String,
         type: RinneLogType,
         tag: String = defaultTag,
-        dateTime: LocalDateTime = Clock.System.now()
-            .toLocalDateTime(TimeZone.currentSystemDefault())
+        dateTime: RinneDateTime = RinneDateTime.now(),
     )
 
     fun clearLogs()
 
-    companion object : RinneLogger by RootRinneLogger.default {
+    companion object : RinneLogger by RinneRootDefaultLogger() {
         const val DEFAULT_TAG = "RinneLogger"
     }
 }

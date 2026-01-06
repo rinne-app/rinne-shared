@@ -1,14 +1,12 @@
-import com.rinne.extensions.rinneAndroid
+import com.rinne.shared.extensions.rinneAndroid
 
 plugins {
-    alias(libs.plugins.rinne.multiplatform.library)
-    alias(libs.plugins.rinne.multiplatform.compose)
+    alias(sharedLibs.plugins.rinne.multiplatform.library)
+    alias(sharedLibs.plugins.rinne.multiplatform.compose)
 }
 
-
-rinneAndroid("com.rinne.libraries.reader.markdown")
-
 kotlin {
+    rinneAndroid("com.rinne.libraries.reader.markdown")
     sourceSets.commonMain.dependencies {
         implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.4.0")
         implementation("org.jetbrains:markdown:0.7.3")

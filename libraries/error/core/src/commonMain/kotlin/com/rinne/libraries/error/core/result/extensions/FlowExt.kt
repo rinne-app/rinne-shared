@@ -20,22 +20,3 @@ fun <T, R> Flow<T>.mapAsRinneResult(
         withResult(result, withLoading) { transform.invoke(value) }
     }
 }
-
-fun <T> Flow<T>.asRinneResult(
-    result: MutableRinneResult<T> = MutableRinneResult(),
-    withLoading: Boolean = true,
-//    TODO rework retry it can cause error (infinity retry)
-    retry: suspend (cause: Throwable) -> Boolean = { true },
-): Flow<RinneResult<T>> {
-    return map<T, RinneResult<T>> {
-        result.setState(RinneResultState.Success(it))
-        result
-    }.onStart {
-        if (withLoading) result.setState(RinneResultState.Loading)
-        emit(result)
-        result
-    }.catch { throwable ->
-        if (withLoading) result.setState(RinneResultState.Error(throwable.asRinneException()))
-        emit(result)
-    }.retry(predicate = retry)
-}

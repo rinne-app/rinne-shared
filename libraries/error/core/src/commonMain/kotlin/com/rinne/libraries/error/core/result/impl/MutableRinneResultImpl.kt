@@ -5,11 +5,15 @@ import com.rinne.libraries.error.core.result.MutableRinneResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-internal class MutableRinneResultImpl<T>(state: RinneResultState<T>) : MutableRinneResult<T> {
-    private val _stateFlow = MutableStateFlow<RinneResultState<T>>(state)
+internal class MutableRinneResultImpl<T>(private val initialState: RinneResultState<T>) : MutableRinneResult<T> {
+    private val _stateFlow = MutableStateFlow<RinneResultState<T>>(initialState)
     override val stateFlow = _stateFlow.asStateFlow()
 
     override fun setState(newState: RinneResultState<T>) {
         _stateFlow.value = newState
+    }
+
+    override fun reset() {
+        setState(initialState)
     }
 }

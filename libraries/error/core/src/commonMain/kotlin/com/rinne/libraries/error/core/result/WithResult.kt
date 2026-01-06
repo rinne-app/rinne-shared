@@ -1,5 +1,6 @@
 package com.rinne.libraries.error.core.result
 
+import com.rinne.libraries.error.core.asRinneException
 import com.rinne.libraries.logger.core.RootRinneLogger
 import com.rinne.libraries.logger.core.extensions.e
 import kotlin.uuid.ExperimentalUuidApi
@@ -36,7 +37,7 @@ suspend fun <T> withResult(
         .onSuccess { result.setState(RinneResultState.Success(it), tag) }
         .onFailure {
             RootRinneLogger.default.e(throwable = it)
-            result.setState(RinneResultState.Error(it), tag)
+            result.setState(RinneResultState.Error(it.asRinneException()), tag)
         }
 
     return result

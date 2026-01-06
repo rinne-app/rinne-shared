@@ -1,4 +1,4 @@
-import com.rinne.extensions.rinneAndroid
+import com.rinne.shared.extensions.rinneAndroid
 
 plugins {
     alias(sharedLibs.plugins.rinne.multiplatform.library)
@@ -6,8 +6,7 @@ plugins {
 //    alias(sharedLibs.plugins.rinne.multiplatform.ktor)
 }
 
-rinneAndroid("com.rinne.libraries.logger.core")
-
 kotlin {
+    rinneAndroid("com.rinne.libraries.logger.core")
     sourceSets.commonMain.dependencies {}
 }

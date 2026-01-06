@@ -1,13 +1,12 @@
-import com.rinne.extensions.rinneAndroid
+import com.rinne.shared.extensions.rinneAndroid
 
 plugins {
-    alias(libs.plugins.rinne.multiplatform.library)
-    alias(libs.plugins.rinne.multiplatform.koin)
+    alias(sharedLibs.plugins.rinne.multiplatform.library)
+    //TODO
+//    alias(libs.plugins.rinne.multiplatform.koin)
 }
 
-
-rinneAndroid("com.rinne.libraries.di.core")
-
 kotlin {
+    rinneAndroid("com.rinne.libraries.di.core")
     sourceSets.commonMain.dependencies {}
 }

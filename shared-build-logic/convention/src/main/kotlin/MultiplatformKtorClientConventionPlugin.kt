@@ -1,5 +1,5 @@
-import com.rinne.configureKotlinSerializationMultiplatform
-import com.rinne.configureKtorClientMultiplatform
+import com.rinne.shared.configureKotlinSerializationMultiplatform
+import com.rinne.shared.configureKtorClientMultiplatform
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 

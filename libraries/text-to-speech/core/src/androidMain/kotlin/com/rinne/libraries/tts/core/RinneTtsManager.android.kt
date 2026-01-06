@@ -6,12 +6,12 @@ import android.speech.tts.UtteranceProgressListener
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import com.rinne.libraries.locale.core.RinneLocale
+import com.rinne.libraries.locale.core.asAndroidLocale
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import org.koin.core.Koin
-import java.util.Locale
 
 class AndroidRinneTtsManagerContext(
     val context: Context,
@@ -47,12 +47,8 @@ class AndroidRinneTtsManager(private val context: AndroidRinneTtsManagerContext)
 
     private val progressStateFlow = MutableStateFlow<RinneTtsProgress>(RinneTtsProgress.Idle)
 
-    override fun setLanguage(language: RinneTtsLanguage) {
-        textToSpeech.language = when (language) {
-            RinneTtsLanguage.ENGLISH -> Locale.ENGLISH
-            RinneTtsLanguage.GERMAN -> Locale.GERMAN
-            RinneTtsLanguage.RUSSIAN -> Locale.forLanguageTag("ru")
-        }
+    override fun setLanguage(locale: RinneLocale) {
+        textToSpeech.language = locale.asAndroidLocale()
     }
 
     override fun setText(text: String?) {
@@ -61,7 +57,8 @@ class AndroidRinneTtsManager(private val context: AndroidRinneTtsManagerContext)
 
     override fun play() {
         if (textToSpeech.isSpeaking || text == null) return
-        textToSpeech.setSpeechRate(1.25f)
+//        textToSpeech.setSpeechRate(1.25f)
+        textToSpeech.setSpeechRate(1f)
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, "unique_id")
     }
 

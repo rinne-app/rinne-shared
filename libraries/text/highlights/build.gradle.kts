@@ -1,14 +1,12 @@
-import com.rinne.extensions.rinneAndroid
+import com.rinne.shared.extensions.rinneAndroid
 
 plugins {
-    alias(libs.plugins.rinne.multiplatform.library)
-    alias(libs.plugins.rinne.multiplatform.compose)
+    alias(sharedLibs.plugins.rinne.multiplatform.library)
+    alias(sharedLibs.plugins.rinne.multiplatform.compose)
 }
 
-
-rinneAndroid("com.rinne.libraries.highlights")
-
 kotlin {
+    rinneAndroid("com.rinne.libraries.highlights")
     sourceSets.commonMain.dependencies {
         implementation(projects.rinneShared.libraries.text.core)
     }

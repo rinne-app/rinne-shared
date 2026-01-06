@@ -3,15 +3,16 @@ package com.rinne.libraries.error.compose.result
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.produceState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.rinne.libraries.error.compose.result.impl.RinneResultUiStateImpl
-import com.rinne.libraries.error.core.asRinneException
 import com.rinne.libraries.error.core.result.MutableRinneResult
 import com.rinne.libraries.error.core.result.RinneResultState
+import com.rinne.libraries.error.core.result.isLoading
 import com.rinne.libraries.error.core.result.state
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 
 //TODO
 //class RinneResultUiMapper {
@@ -22,7 +23,7 @@ fun <T> RinneResultUiState(
     mutableAppResult: MutableRinneResult<T> = MutableRinneResult(),
     defaultState: RinneResultState<T> = mutableAppResult.state,
     withLoader: Boolean = true,
-): RinneResultUiState<T> = RinneResultUiStateImpl(
+): MutableRinneResultUiState<T> = RinneResultUiStateImpl(
     mutableAppResult, defaultState, withLoader
 )
 
@@ -34,6 +35,29 @@ interface RinneResultUiState<T> {
     fun reset()
 }
 
+@Stable
+interface MutableRinneResultUiState<T> : RinneResultUiState<T> {
+    override val mutableAppResult: MutableRinneResult<T>
+}
+
+//TODO implement
+@Stable
+interface RinneResultObservableUiState<T> {
+    fun launchIn(coroutineScope: CoroutineScope)
+    fun observe(flow: Flow<T>)
+}
+
+//TODO improve, add lifecycle handling, check collectAsStateWithLifecycle
+@Composable
+fun <T> MutableRinneResultUiState<T>.collectIsLoadingState(): State<Boolean> {
+    return produceState(mutableAppResult.isLoading) {
+        mutableAppResult.stateFlow.collect { value = it == RinneResultState.Loading }
+    }
+}
+
+suspend fun <T> RinneResultUiState<T>.tryRefresh() {
+    (this as? RinneRefreshableResultUiState)?.refresh()
+}
 
 fun <T> RinneResultUiState<T>.getOrNull(): T? {
     return when (val value = stateFlow.value) {

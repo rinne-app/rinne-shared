@@ -3,7 +3,7 @@ package com.rinne.libraries.error.compose.result
 import com.rinne.libraries.error.core.RinneException
 
 sealed interface RinneResultUi<out T> {
-    interface WithData<T> : RinneResultUi<T> {
+    sealed interface WithData<T> : RinneResultUi<T> {
         val data: T
     }
 
@@ -27,4 +27,12 @@ sealed interface RinneResultUi<out T> {
 
     data class Success<T>(override val data: T) : WithData<T>
     data class Updating<T>(override val data: T) : WithData<T>
+}
+
+val <T> RinneResultUi<T>.isUpdating
+    get() = this is RinneResultUi.Updating
+
+fun <T> RinneResultUi<T>.getDataOrNull() = when (this is RinneResultUi.WithData<T>) {
+    true -> data
+    false -> null
 }

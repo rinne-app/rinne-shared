@@ -1,5 +1,6 @@
 package com.rinne.libraries.logger.core.combined
 
+import com.rinne.libraries.date.time.core.RinneDateTime
 import com.rinne.libraries.logger.core.RinneLogger
 import com.rinne.libraries.logger.core.model.RinneLog
 import com.rinne.libraries.logger.core.model.RinneLogType
@@ -7,7 +8,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.datetime.LocalDateTime
 
 internal class CombinedRinneLogger(
     loggers: List<RinneLogger>,
@@ -30,7 +30,7 @@ internal class CombinedRinneLogger(
         message: String,
         type: RinneLogType,
         tag: String,
-        dateTime: LocalDateTime
+        dateTime: RinneDateTime
     ) {
         mainLogger.log(message, type, tag, dateTime)
     }

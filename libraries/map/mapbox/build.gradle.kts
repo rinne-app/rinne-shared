@@ -1,14 +1,12 @@
-import com.rinne.extensions.rinneAndroid
+import com.rinne.shared.extensions.rinneAndroid
 
 plugins {
-    alias(libs.plugins.rinne.multiplatform.library)
-    alias(libs.plugins.rinne.multiplatform.compose)
+    alias(sharedLibs.plugins.rinne.multiplatform.library)
+    alias(sharedLibs.plugins.rinne.multiplatform.compose)
 }
 
-
-rinneAndroid("com.rinne.libraries.map.mapbox")
-
 kotlin {
+    rinneAndroid("com.rinne.libraries.map.mapbox")
     sourceSets.commonMain.dependencies {
         api(projects.rinneShared.libraries.map.core)
 

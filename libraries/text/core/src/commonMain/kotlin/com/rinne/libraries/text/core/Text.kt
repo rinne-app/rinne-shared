@@ -7,6 +7,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
 @Immutable
+@Deprecated("use stringResource() instead")
 sealed interface Text {
     data class Simple(val text: String) : Text
     data class AnnotatedText(val text: AnnotatedString) : Text

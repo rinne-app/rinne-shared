@@ -1,6 +1,6 @@
 package com.rinne.shared.network.model.deprecated
 
-import kotlinx.datetime.LocalDateTime
+import com.rinne.libraries.date.time.core.RinneDateTime
 
 data class ArticlesInfo(
     val tag: String,
@@ -17,5 +17,5 @@ data class ArticleInfo(
     val title: String,
     val text: String,
     val tags: List<String>,
-    val dateTime: LocalDateTime,
+    val dateTime: RinneDateTime,
 )

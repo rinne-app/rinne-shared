@@ -1,13 +1,11 @@
-import com.rinne.extensions.rinneAndroid
+import com.rinne.shared.extensions.rinneAndroid
 
 plugins {
-    alias(libs.plugins.rinne.multiplatform.library)
+    alias(sharedLibs.plugins.rinne.multiplatform.library)
 }
 
-
-rinneAndroid("com.rinne.libraries.error.core")
-
 kotlin {
+    rinneAndroid("com.rinne.libraries.error.core")
     sourceSets.commonMain.dependencies {
         implementation(projects.rinneShared.libraries.logger.core)
     }

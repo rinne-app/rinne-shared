@@ -1,6 +1,6 @@
 package com.rinne.shared.network.model.deprecated
 
-import kotlinx.datetime.LocalDateTime
+import com.rinne.libraries.date.time.core.RinneDateTime
 
 //TODO co-authors
 data class ArticleDetails(
@@ -13,7 +13,7 @@ data class ArticleDetails(
     val commentsCount: String,
     val mainTag: String,
     val author: ProfileInfo,
-    val dateTime: LocalDateTime,
+    val dateTime: RinneDateTime,
     val discussion: Discussion,
     val tags: List<String>,
 )

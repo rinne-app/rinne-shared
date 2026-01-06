@@ -1,5 +1,6 @@
 package com.rinne.shared.network.model.deprecated
 
+import com.rinne.libraries.date.time.core.RinneDate
 import com.rinne.shared.network.model.deprecated.books.BookDetails
 import com.rinne.shared.network.model.deprecated.books.BooksHomeInfo
 import com.rinne.shared.network.model.deprecated.books.asInfo
@@ -23,11 +24,8 @@ import com.rinne.shared.network.model.deprecated.scopes.ScopesInfo
 import com.rinne.shared.network.model.deprecated.tasks.TaskInfo
 import com.rinne.shared.network.model.deprecated.tasks.TasksFolderInfo
 import com.rinne.shared.network.model.deprecated.tasks.TasksFolderType
-import kotlin.time.Clock
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import com.rinne.libraries.date.time.core.RinneDateTime
+import com.rinne.libraries.date.time.core.RinneMonth
 import kotlin.random.Random
 import kotlin.time.ExperimentalTime
 
@@ -41,8 +39,7 @@ object Mock {
                 id = "$it",
                 title = "My new draft ${it + 1}",
                 text = "Text",
-                dateTime = Clock.System.now()
-                    .toLocalDateTime(TimeZone.currentSystemDefault()),
+                dateTime = RinneDateTime.now(),
             )
         },
     )
@@ -154,7 +151,7 @@ object Mock {
                         cover = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Catherine_II_by_F.Rokotov_after_Roslin_%28c.1770%2C_Hermitage%29.jpg/960px-Catherine_II_by_F.Rokotov_after_Roslin_%28c.1770%2C_Hermitage%29.jpg",
                         title = "Odessa founded by decree of Catherine II of Russia.",
                         description = "The Flemish engineer working for the Russian Empress Catherine the Great, José de Ribas's collaborator Franz de Voland recommended the area of Khadjibey fortress as the site for the region's basic port: it had an ice-free harbor, breakwaters could be cheaply constructed that would render the harbor safe and it would have the capacity to accommodate large fleets. The Namestnik of Yekaterinoslav and Voznesensk, Platon Zubov (one of Catherine's favorites), supported this proposal. In 1794 Catherine issued a Rescript to José de Ribas: \"Considering favorable Khadjibey location... I order to establish here a navy harbor and trading pierce...\" and invested the first money (26.000 rubles) in construction. Franz de Voland drew up a plan that would end up being the city's plan.",
-                        date = LocalDate(1794, 9, 2),
+                        date = RinneDate.of(1794, RinneMonth.DECEMBER, 2),
                     )
                 }
             )
@@ -219,7 +216,7 @@ object Mock {
         commentsCount = "200",
         bookmarked = Random.nextBoolean(),
         author = profileInfo(),
-        dateTime = LocalDateTime(2025, 3, 1, 12, 0),
+        dateTime = RinneDateTime.of(2025, RinneMonth.DECEMBER, 1, 12, 0),
         discussion = Discussion(
             id = "1",
             comments = List(15) {
@@ -228,7 +225,7 @@ object Mock {
                     authorInfo = profileInfo(),
                     text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                     rating = "200",
-                    dateTime = LocalDateTime(2025, 4, 13, 12, 32),
+                    dateTime = RinneDateTime.of(2025, RinneMonth.DECEMBER, 13, 12, 32),
                     answers = emptyList(),
                 )
             }
@@ -247,7 +244,7 @@ object Mock {
                 rating = "+200",
                 commentsCount = "200",
                 author = profileInfo(),
-                dateTime = LocalDateTime(2025, 3, 1, 12, 0),
+                dateTime = RinneDateTime.of(2025, RinneMonth.DECEMBER, 1, 12, 0),
                 image = null,
             )
         },

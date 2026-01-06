@@ -2,7 +2,7 @@ plugins {
     `kotlin-dsl`
 }
 
-group = "com.rinne.buildlogic"
+group = "com.rinne.shared.buildlogic"
 
 dependencies {
     compileOnly(sharedLibs.android.gradlePlugin)
@@ -15,23 +15,23 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        register("multiplatformLibraryConventionPlugin") {
+        register("sharedMultiplatformLibraryConventionPlugin") {
             id = "rinne.shared.multiplatform.library"
             implementationClass = "MultiplatformLibraryConventionPlugin"
         }
-        register("multiplatformCoreConventionPlugin") {
+        register("sharedMultiplatformCoreConventionPlugin") {
             id = "rinne.shared.multiplatform.core"
             implementationClass = "MultiplatformCoreConventionPlugin"
         }
-        register("multiplatformKoinConventionPlugin") {
+        register("sharedMultiplatformKoinConventionPlugin") {
             id = "rinne.shared.multiplatform.koin"
             implementationClass = "MultiplatformKoinConventionPlugin"
         }
-        register("multiplatformKotlinSerializationConventionPlugin") {
+        register("sharedMultiplatformKotlinSerializationConventionPlugin") {
             id = "rinne.shared.multiplatform.kotlin.serialization"
             implementationClass = "MultiplatformKotlinSerializationConventionPlugin"
         }
-        register("multiplatformKtorClientConventionPlugin") {
+        register("sharedMultiplatformKtorClientConventionPlugin") {
             id = "rinne.shared.multiplatform.ktor.client"
             implementationClass = "MultiplatformKtorClientConventionPlugin"
         }

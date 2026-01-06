@@ -1,6 +1,6 @@
 package com.rinne.shared.network.model.deprecated
 
-import kotlinx.datetime.LocalDate
+import com.rinne.libraries.date.time.core.RinneDate
 
 data class TimelineDetails(
     val pageInfo: PageShortInfo,
@@ -22,5 +22,5 @@ data class TimelineYearEvent(
     val cover: String?,
     val title: String,
     val description: String,
-    val date: LocalDate,
+    val date: RinneDate,
 )

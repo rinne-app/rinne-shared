@@ -7,7 +7,7 @@ import com.rinne.libraries.logger.core.model.RinneLogType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.datetime.LocalDateTime
+import com.rinne.libraries.date.time.core.RinneDateTime
 
 internal class KermitRinneLoggerImpl(override val defaultTag: String) : RinneLogger {
     private val _logsStateFlow =
@@ -23,7 +23,7 @@ internal class KermitRinneLoggerImpl(override val defaultTag: String) : RinneLog
         message: String,
         type: RinneLogType,
         tag: String,
-        dateTime: LocalDateTime
+        dateTime: RinneDateTime
     ) {
         log(log = RinneLog(tag = tag, message = message, type = type, dateTime = dateTime))
     }

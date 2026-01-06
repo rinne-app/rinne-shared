@@ -5,7 +5,7 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 fun <T> MutableAppResultWithTag(
-    state: RinneResultState<T> = RinneResultState.Loading
+    state: RinneResultState<T> = RinneResultState.None
 ): MutableRinneResultWithTag<T> = MutableRinneResultWithTagImpl(state)
 
 fun <T> MutableAppResultWithTag(

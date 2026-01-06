@@ -1,15 +1,17 @@
 [versions]
 kotlin = "2.2.10"
 ktor = "3.2.3"
-agp = "8.10.0"
+agp = "8.10.1"
 kotlinx-coroutines = "1.10.2"
 kotlinx-datetime = "0.7.1"
 kotlinx-serialization = "1.9.0"
 kermit = "2.0.8"
+koin = "4.0.4"
 
 
 [libraries]
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
 
@@ -44,10 +46,11 @@ kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref 
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
-android-library = { id = "com.android.library", version.ref = "agp" }
+android-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 
 rinne-multiplatform-koin = { id = "rinne.shared.multiplatform.koin", version = "unspecified" }
 rinne-multiplatform-kotlin-serialization = { id = "rinne.shared.multiplatform.kotlin.serialization", version = "unspecified" }
 rinne-multiplatform-library = { id = "rinne.shared.multiplatform.library", version = "0.0.1" }
 rinne-multiplatform-core = { id = "rinne.shared.multiplatform.core", version = "unspecified" }
 rinne-multiplatform-ktor-client = { id = "rinne.shared.multiplatform.ktor.client", version = "unspecified" }
+rinne-multiplatform-compose = { id = "rinne.multiplatform.compose", version = "unspecified" }
