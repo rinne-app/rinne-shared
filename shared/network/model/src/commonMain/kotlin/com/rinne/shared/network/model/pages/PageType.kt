@@ -1,7 +1,7 @@
 package com.rinne.shared.network.model.pages
 
 enum class NetworkPageType {
-    DEFAULT, PLACE, PERSON, LANGUAGE;
+    DEFAULT, PLACE, PERSON, DICTIONARY, HISTORY_FACT, LANGUAGE;
 
     companion object {
         val default = DEFAULT

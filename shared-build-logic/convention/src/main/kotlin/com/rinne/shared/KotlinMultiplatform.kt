@@ -7,6 +7,7 @@ import com.rinne.shared.extensions.shouldEnableAndroid
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 
 
@@ -18,7 +19,9 @@ internal fun Project.configureKotlinMultiplatform(includeAndroid: Boolean = shou
     extensions.configure<KotlinMultiplatformExtension> {
         jvmToolchain(11)
 
-        jvm("desktop")
+        jvm("desktop") {
+            attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.jvm)
+        }
 
 //        if (includeAndroid) {
 //            androidLibrary()

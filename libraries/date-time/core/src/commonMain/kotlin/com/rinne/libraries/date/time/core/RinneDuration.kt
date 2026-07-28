@@ -4,9 +4,12 @@ import com.rinne.libraries.date.time.core.RinneDuration.Companion.ZERO
 import com.rinne.libraries.date.time.core.RinneMath.floorMod
 import kotlin.math.roundToLong
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 internal const val MAX_SECONDS = Long.MAX_VALUE / 2
 
+@ConsistentCopyVisibility
 data class RinneDuration internal constructor(
     val seconds: Long,
     val nanoseconds: Int
@@ -26,6 +29,43 @@ data class RinneDuration internal constructor(
         return if (secCmp != 0) secCmp else nanoseconds.compareTo(other.nanoseconds)
     }
 
+    override fun toString(): String {
+        if (this == INFINITE) return "Infinity"
+        if (this == NEG_INFINITE) return "-Infinity"
+
+        val normalized = normalize()
+        val seconds = normalized.seconds
+        val nanoseconds = normalized.nanoseconds
+
+        if (seconds in -9_223_372_036L..9_223_372_036L) {
+            try {
+                val d = seconds.toDuration(DurationUnit.SECONDS) + nanoseconds.toDuration(DurationUnit.NANOSECONDS)
+                if (!d.isInfinite()) {
+                    return d.toString()
+                }
+            } catch (e: Exception) {
+                // fallback
+            }
+        }
+
+        val isNegative = seconds < 0 || (seconds == 0L && nanoseconds < 0)
+        val absSeconds = if (seconds < 0) -seconds else seconds
+        val absNanos = if (nanoseconds < 0) -nanoseconds else nanoseconds
+
+        return buildString {
+            if (isNegative) append('-')
+            append(absSeconds / 86400).append("d ")
+            append((absSeconds % 86400) / 3600).append("h ")
+            append((absSeconds % 3600) / 60).append("m ")
+            append(absSeconds % 60)
+            if (absNanos > 0) {
+                append('.')
+                append(absNanos.toString().padStart(9, '0').dropLastWhile { it == '0' })
+            }
+            append('s')
+        }
+    }
+
     companion object {
         val ZERO = RinneDuration(0, 0)
         val INFINITE = RinneDuration(MAX_SECONDS, 999_999_999)
@@ -38,7 +78,6 @@ data class RinneDuration internal constructor(
         }
     }
 }
-
 
 /** Normalizes signs and overflows */
 private fun RinneDuration.normalize(): RinneDuration {

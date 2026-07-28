@@ -9,3 +9,7 @@ sealed interface RinneResultState<out T> {
     data class Error(val error: RinneException) : RinneResultState<Nothing>
     data class Success<T>(val data: T) : RinneResultState<T>
 }
+
+fun <T> RinneResultState<T>.getDataOrNull(): T? {
+    return (this as? RinneResultState.Success<T>)?.data
+}

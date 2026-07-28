@@ -2,13 +2,14 @@ package com.rinne.libraries.date.time.core
 
 import com.rinne.libraries.date.time.core.kotlinx.RinneDateTimeKotlinx
 import kotlinx.datetime.LocalDateTime
+import kotlin.time.Duration
 
 interface RinneInstant : Comparable<RinneInstant> {
     val timeZone: RinneTimeZone
     val epochMillis: Long
 
     override fun compareTo(other: RinneInstant): Int {
-        return other.epochMillis.toInt() //TODO review
+        return epochMillis.compareTo(other.epochMillis)
     }
 }
 

@@ -32,6 +32,8 @@ data class NetworkTask(
     @SerialName("status") val status: NetworkTasksStatusInfo,
     @SerialName("availableStatuses") val availableStatuses: List<NetworkTasksStatusInfo>,
     @SerialName("group") val group: NetworkTasksGroupInfo,
+    @SerialName("subTaskIds") val subTaskIds: List<String> = emptyList(),
+    @SerialName("schedule") val schedule: NetworkTaskSchedule? = null,
 )
 
 @Serializable
@@ -39,6 +41,7 @@ data class NetworkEditTask(
     @SerialName("name") val name: String,
     @SerialName("description") val description: String,
     @SerialName("statusId") val statusId: String?,
+    @SerialName("parentTaskId") val parentTaskId: String? = null,
 )
 
 @Serializable
@@ -47,6 +50,20 @@ data class NetworkTaskInfo(
     @SerialName("name") val name: String,
     @SerialName("description") val description: String,
     @SerialName("status") val status: NetworkTasksStatusInfo,
+    @SerialName("parentTaskId") val parentTaskId: String? = null,
+    @SerialName("schedule") val schedule: NetworkTaskSchedule? = null,
+)
+
+@Serializable
+data class NetworkTaskSchedule(
+    @SerialName("startEpochMillis") val startEpochMillis: Long,
+    @SerialName("durationSeconds") val durationSeconds: Long? = null,
+)
+
+@Serializable
+data class NetworkEditTaskSchedule(
+    @SerialName("startEpochMillis") val startEpochMillis: Long,
+    @SerialName("durationSeconds") val durationSeconds: Long? = null,
 )
 
 @Serializable

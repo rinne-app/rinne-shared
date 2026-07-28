@@ -28,7 +28,7 @@ class XmlPullParser(private val input: String) {
     private var index = 0
 
     fun parse(): XmlTag {
-        skipUntil('<')
+        skipProlog()
         return parseTag()
     }
 
@@ -64,6 +64,9 @@ class XmlPullParser(private val input: String) {
             if (peek() == '<') {
                 if (peek(1) == '/') {
                     break // closing tag
+                } else if (peek(1) == '?' || peek(1) == '!') {
+                    skipSpecialTag()
+                    continue
                 } else {
                     val tag = parseTag()
                     content.add(XmlTagContent.Tag(tag))
@@ -94,6 +97,70 @@ class XmlPullParser(private val input: String) {
     private fun expect(c: Char) {
         if (peek() != c) throw IllegalArgumentException("Expected '$c' but found '${peek()}' at $index")
         index++
+    }
+
+    private fun skipProlog() {
+        while (index < input.length) {
+            skipWhitespace()
+            if (peek() != '<') {
+                index++
+                continue
+            }
+
+            when (peek(1)) {
+                '?' -> skipProcessingInstruction()
+                '!' -> skipSpecialTag()
+                else -> return
+            }
+        }
+    }
+
+    private fun skipSpecialTag() {
+        if (peek() != '<') return
+        when {
+            peek(1) == '?' -> skipProcessingInstruction()
+            peek(1) == '!' && peek(2) == '-' && peek(3) == '-' -> skipComment()
+            peek(1) == '!' && matchesAt(index + 2, "[CDATA[") -> skipUntilSequence("]]>")
+            else -> {
+                // DOCTYPE and other declarations
+                expect('<')
+                expect('!')
+                skipUntil('>')
+                if (peek() == '>') expect('>')
+            }
+        }
+    }
+
+    private fun skipProcessingInstruction() {
+        expect('<')
+        expect('?')
+        skipUntilSequence("?>")
+    }
+
+    private fun skipComment() {
+        expect('<')
+        expect('!')
+        expect('-')
+        expect('-')
+        skipUntilSequence("-->")
+    }
+
+    private fun skipUntilSequence(sequence: String) {
+        while (index < input.length) {
+            if (matchesAt(index, sequence)) {
+                index += sequence.length
+                return
+            }
+            index++
+        }
+    }
+
+    private fun matchesAt(start: Int, sequence: String): Boolean {
+        if (start < 0 || start + sequence.length > input.length) return false
+        for (i in sequence.indices) {
+            if (input[start + i] != sequence[i]) return false
+        }
+        return true
     }
 
     private fun skipUntil(c: Char) {

@@ -16,12 +16,30 @@ interface RinneAiChat {
     }
 }
 
-sealed interface RinneAiModel {
-    sealed interface ChatGptModel : RinneAiModel
+sealed interface RinneAiProvider {
+    data object OpenAi : RinneAiProvider
+    data object Gemini : RinneAiProvider
+}
 
-    data object ChatGpt5mini : ChatGptModel
-    data object ChatGpt4oMini : ChatGptModel
-    data object ChatGpt4o : ChatGptModel
+sealed interface RinneAiModel {
+    sealed interface OpenAiModel : RinneAiModel
+    sealed interface GeminiModel : RinneAiModel
+
+    data object ChatGpt5Nano : OpenAiModel
+    data object ChatGpt5mini : OpenAiModel
+    data object ChatGpt41 : OpenAiModel
+    data object ChatGpt41Mini : OpenAiModel
+    data object ChatGpt41Nano : OpenAiModel
+    data object ChatGpt4oMini : OpenAiModel
+    data object ChatGpt4o : OpenAiModel
+
+    data object Gemini15Flash : GeminiModel
+    data object Gemini15Pro : GeminiModel
+    data object Gemini20Flash : GeminiModel
+    data object Gemini20FlashLite : GeminiModel
+    data object Gemini3ProPreview : GeminiModel
+    data object Gemini3FlashPreview : GeminiModel
+    data object Gemini3ProImagePreview : GeminiModel
 
     companion object {
         val default = ChatGpt4oMini
@@ -42,7 +60,9 @@ data class RinneAiMessage(
 
 data class RinneAiConfig(
     val apiKey: String,
+    val provider: RinneAiProvider = RinneAiProvider.OpenAi,
     val model: RinneAiModel = RinneAiModel.default,
+    val enableWebSearch: Boolean = false,
 )
 
 

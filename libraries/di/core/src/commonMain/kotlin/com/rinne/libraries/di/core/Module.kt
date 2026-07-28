@@ -12,7 +12,7 @@ interface RinneDiProvider<T> {
     fun provide(): T
 }
 
-class DraftViewModelDependencies(
+class NoteViewModelDependencies(
     val testUseCase: RinneDiProvider<Unit>,
     val test2UseCase: RinneDiProvider<Unit>,
 )

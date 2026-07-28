@@ -1,11 +1,16 @@
 package com.rinne.libraries.error.compose.result.new
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.retain.retain
+import com.rinne.libraries.error.core.result.MutableRinneResult
 import com.rinne.libraries.error.core.result.RinneResult
 import com.rinne.libraries.error.core.result.observer.RinneResultObserver
 import com.rinne.libraries.error.core.result.observer.observeAsRinneResult
+import com.rinne.libraries.logger.core.RinneLogger
+import com.rinne.libraries.logger.core.extensions.i
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -14,6 +19,14 @@ fun <T> rememberRinneResultUiState(
     loggerTag: String? = null,
 ): RinneResultUiState<T> {
     return RinneResultUiStateImpl.remember(result, loggerTag)
+}
+
+@Composable
+fun <T, R> rememberRinneResultUiStateMapper(
+    result: RinneResultUiState<T>,
+    transformer: RinneResultUiStateTransformer<T, R>,
+): RinneResultUiState<R> {
+    return remember(result, transformer) { result.map(transformer) }
 }
 
 @Composable
@@ -33,7 +46,7 @@ fun <T> rememberRinneResultUiState(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     loggerTag: String? = null,
 ): RinneResultUiState<T> {
-    val result = retain(coroutineScope) { observer.observeAsRinneResult(coroutineScope) }
+    val result = retain { observer.observeAsRinneResult(coroutineScope = coroutineScope) }
 
     return rememberRinneResultUiState(result, loggerTag)
 }
@@ -45,7 +58,7 @@ fun <T, R> rememberRinneResultUiState(
     loggerTag: String? = null,
     transformer: RinneResultUiStateTransformer<T, R>
 ): RinneResultUiState<R> {
-    val result = retain(coroutineScope) { observer.observeAsRinneResult(coroutineScope) }
+    val result = retain { observer.observeAsRinneResult(coroutineScope = coroutineScope) }
 
     return rememberRinneResultUiState(result = result, transformer = transformer, loggerTag = loggerTag)
 }

@@ -3,6 +3,9 @@ package com.rinne.libraries.locale.core
 sealed interface RinneLocale {
     val code: String
     val languageCode: String get() = code
+    val emoji: String? get() = null
+    val coverUrl: String? get() = null
+
 
     sealed interface Known : RinneLocale
 
@@ -40,6 +43,9 @@ sealed interface RinneLocale {
 
     data class Custom(
         override val code: String,
-        override val languageCode: String = code
+        override val languageCode: String = code,
+        override val emoji: String? = null,
+        override val coverUrl: String? = null,
+        val name: String,
     ) : RinneLocale
 }

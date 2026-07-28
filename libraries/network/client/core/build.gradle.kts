@@ -2,12 +2,13 @@ import com.rinne.shared.extensions.rinneAndroid
 
 plugins {
     alias(sharedLibs.plugins.rinne.multiplatform.library)
-    alias(sharedLibs.plugins.rinne.multiplatform.koin)
-    alias(sharedLibs.plugins.rinne.multiplatform.ktor.client)
 }
 
 
 kotlin {
     rinneAndroid("com.rinne.libraries.network.client.core")
-    sourceSets.commonMain.dependencies {}
+    sourceSets.commonMain.dependencies {
+        implementation(projects.rinneShared.libraries.logger.core)
+        implementation(sharedLibs.kotlinx.serialization.json)
+    }
 }

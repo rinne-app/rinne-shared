@@ -21,7 +21,7 @@ internal class RinneResultUiStateImpl<T> private constructor(
     override val reseater: RinneReseatable?
 ) : RinneResultUiState<T> {
     private var lastData by mutableStateOf<T?>(null)
-    override var current: RinneResultUiState.Type<T> by mutableStateOf(RinneResultUiState.Type.Loading)
+    override var current: RinneResultUiState.Type<T> by mutableStateOf(RinneResultUiState.Type.None)
         private set
 
 

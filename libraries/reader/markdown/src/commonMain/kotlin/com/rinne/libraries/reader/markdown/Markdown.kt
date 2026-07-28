@@ -11,12 +11,15 @@ import com.rinne.libraries.reader.markdown.deprecated.Markdown
 @Composable
 fun RinneMarkdown(
     content: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    scrollable: Boolean = true,
 ) {
+    val scrollableModifier = if (scrollable) Modifier.verticalScroll(rememberScrollState()) else Modifier
+
     Markdown(
         content = content,
         modifier = modifier
-            .verticalScroll(rememberScrollState())
+            .then(scrollableModifier)
             .padding(24.dp),
     )
 }

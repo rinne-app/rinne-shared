@@ -1,11 +1,12 @@
 package com.rinne.libraries.tts.core
 
 import androidx.compose.runtime.Composable
+import com.rinne.libraries.locale.core.RinneLocale
 import org.koin.core.Koin
 
 actual fun createDefaultTtsManager(context: RinneTtsManagerContext): RinneTtsManager {
     return object : RinneTtsManager {
-        override fun setLanguage(language: RinneTtsLanguage) {}
+        override fun setLanguage(locale: RinneLocale) {}
 
         override fun setText(text: String?) {}
 

@@ -91,9 +91,13 @@ object RinneDateTimeProviderKotlinx : RinneDateTimeProvider {
 
     @OptIn(ExperimentalTime::class)
     override fun parse(input: String): RinneDateTime {
-        return RinneDateTimeKotlinx(Instant.parse(input).toLocalDateTime(TimeZone.currentSystemDefault()))
+        val dateTime = runCatching { LocalDateTime.parse(input) }
+            .getOrNull() ?: Instant.parse(input).toLocalDateTime(TimeZone.currentSystemDefault())
+
+        return RinneDateTimeKotlinx(dateTime)
     }
 
+    @OptIn(ExperimentalTime::class)
     override fun parse(epochMillis: Long): RinneDateTime {
         return RinneDateTimeKotlinx(
             Instant.fromEpochMilliseconds(epochMillis).toLocalDateTime(TimeZone.currentSystemDefault())

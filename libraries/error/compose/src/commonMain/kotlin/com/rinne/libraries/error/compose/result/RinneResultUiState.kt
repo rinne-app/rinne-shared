@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 //    fun <T> map(result: RinneResultState<T>) = RinneResultUiState<T>()
 //}
 
+@Deprecated("Use com.rinne.libraries.error.compose.result.new.RinneResultUiState")
 fun <T> RinneResultUiState(
     mutableAppResult: MutableRinneResult<T> = MutableRinneResult(),
     defaultState: RinneResultState<T> = mutableAppResult.state,
@@ -28,6 +29,7 @@ fun <T> RinneResultUiState(
 )
 
 @Stable
+@Deprecated("Use com.rinne.libraries.error.compose.result.new.RinneResultUiState")
 interface RinneResultUiState<T> {
     val mutableAppResult: MutableRinneResult<T>
     val stateFlow: StateFlow<RinneResultUi<T>> //TODO StateFlow
@@ -36,6 +38,7 @@ interface RinneResultUiState<T> {
 }
 
 @Stable
+@Deprecated("Use com.rinne.libraries.error.compose.result.new.RinneResultUiState")
 interface MutableRinneResultUiState<T> : RinneResultUiState<T> {
     override val mutableAppResult: MutableRinneResult<T>
 }

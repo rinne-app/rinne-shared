@@ -42,6 +42,7 @@ import kotlin.math.exp
 internal class MemorizerCardsProcessorImpl(
     allCards: List<MemorizerProcessorCard>,
     override val config: MemorizerCardsProcessorConfig,
+    private val now: () -> RinneDateTime = { RinneDateTime.now() },
 ) : MemorizerCardsProcessor {
 
     private var allCards = allCards.toMutableList()
@@ -54,7 +55,7 @@ internal class MemorizerCardsProcessorImpl(
     // В реальном приложении это состояние лучше хранить в БД или UserSession
     private val todayNewCardsCount: Int
         get() {
-            val startOfDay = RinneDateTime.now().truncatedTo(RinneDateTimeUnit.TimeUnit.Hour)
+            val startOfDay = now().truncatedTo(RinneDateTimeUnit.TimeUnit.Hour)
             // Считаем карточки, у которых первая запись в истории сделана сегодня
             return allCards.count { card ->
                 card.history.firstOrNull()?.date?.isAfter(startOfDay) == true
@@ -64,7 +65,7 @@ internal class MemorizerCardsProcessorImpl(
     // Подсчет сделанных review сегодня (для лимита maxReviewCardsPerDay)
     private val todayReviewCount: Int
         get() {
-            val startOfDay = RinneDateTime.now().truncatedTo(RinneDateTimeUnit.TimeUnit.Hour)
+            val startOfDay = now().truncatedTo(RinneDateTimeUnit.TimeUnit.Hour)
             return allCards.sumOf { card ->
                 card.history.count { it.date.isAfter(startOfDay) && card.state.status != MemorizerProcessorCardStatus.NEW }
             }
@@ -78,7 +79,7 @@ internal class MemorizerCardsProcessorImpl(
     }
 
     override fun getPackForLearning(): List<MemorizerProcessorCard> {
-        val now = RinneDateTime.now()
+        val now = now()
         val sessionResult = mutableListOf<MemorizerProcessorCard>()
 
         // Множество тегов, которые уже попали в текущую выдачу.
@@ -143,8 +144,94 @@ internal class MemorizerCardsProcessorImpl(
         return sessionResult
     }
 
+    override fun getAvailableCardOrNull(): MemorizerProcessorCard? {
+        val now = now()
+
+        // 1. Сначала ищем карточку для повторения (REVIEW + LEARNING + RELEARNING)
+        val reviewsLeft = (config.maxReviewCardsPerDay - todayReviewCount).coerceAtLeast(0)
+        if (reviewsLeft > 0) {
+            val bestDueReview = allCards
+                .filter { card ->
+                    card.state.status != MemorizerProcessorCardStatus.NEW &&
+                            card.state.nextReviewDate?.isBefore(now) == true
+                }
+                .maxByOrNull { card ->
+                    calculateReviewScore(card, now, emptySet())
+                }
+
+            if (bestDueReview != null) return bestDueReview
+        }
+
+        // 2. Если нет карточек для повторения, ищем НОВУЮ карточку
+        val newCardsLeft = (config.maxNewCardsPerDay - todayNewCardsCount).coerceAtLeast(0)
+        if (newCardsLeft > 0) {
+            val bestNewCard = allCards
+                .filter { it.state.status == MemorizerProcessorCardStatus.NEW }
+                .maxByOrNull { card ->
+                    calculateNewCardScore(card, emptySet())
+                }
+
+            if (bestNewCard != null) return bestNewCard
+        }
+
+        return null
+    }
+
+    override fun getCardAvailability(card: MemorizerProcessorCard): MemorizerCardProcessorAvailability {
+        val now = now()
+        val isNew = card.state.status == MemorizerProcessorCardStatus.NEW
+        val reviewsLeft = (config.maxReviewCardsPerDay - todayReviewCount).coerceAtLeast(0)
+        val newCardsLeft = (config.maxNewCardsPerDay - todayNewCardsCount).coerceAtLeast(0)
+
+        if (isNew) {
+            return if (newCardsLeft > 0) {
+                MemorizerCardProcessorAvailability.Available
+            } else {
+                val startOfNextDay = now.truncatedTo(RinneDateTimeUnit.TimeUnit.Hour).plus(1, RinneDateTimeUnit.DateUnit.Day)
+                MemorizerCardProcessorAvailability.NotAvailable(startOfNextDay)
+            }
+        } else {
+            val nextReviewDate = card.state.nextReviewDate ?: return MemorizerCardProcessorAvailability.Available
+            val isDue = nextReviewDate.isBefore(now)
+
+            return if (isDue) {
+                if (reviewsLeft > 0) {
+                    MemorizerCardProcessorAvailability.Available
+                } else {
+                    val startOfNextDay = now.truncatedTo(RinneDateTimeUnit.TimeUnit.Hour).plus(1, RinneDateTimeUnit.DateUnit.Day)
+                    MemorizerCardProcessorAvailability.NotAvailable(startOfNextDay)
+                }
+            } else {
+                // Карточка еще не подошла по времени.
+                // Если лимиты на сегодня исчерпаны, она точно не будет доступна раньше завтрашнего дня.
+                val availabilityDate = if (reviewsLeft > 0) {
+                    nextReviewDate
+                } else {
+                    val startOfNextDay = now.truncatedTo(RinneDateTimeUnit.TimeUnit.Hour).plus(1, RinneDateTimeUnit.DateUnit.Day)
+                    if (nextReviewDate.isBefore(startOfNextDay)) startOfNextDay else nextReviewDate
+                }
+                MemorizerCardProcessorAvailability.NotAvailable(availabilityDate)
+            }
+        }
+    }
+
+    override fun getCardGradesAvailability(card: MemorizerProcessorCard): List<MemorizerProcessorCardGradeAvailability> {
+        val now = now()
+        return MemorizerProcessorCardGrade.entries.map { grade ->
+            val nextStateCard = CardScheduler.calculateNextState(
+                card,
+                grade,
+                config.learningStepsDurations,
+                now
+            )
+            val nextDate = nextStateCard.state.nextReviewDate ?: now
+            val duration = if (nextDate.isAfter(now)) now.durationBetween(nextDate) else RinneDuration.ZERO
+            MemorizerProcessorCardGradeAvailability(grade, duration)
+        }
+    }
+
     override fun nextAvailableCardIn(): RinneDuration {
-        val now = RinneDateTime.now()
+        val now = now()
         val reviewsLeft = (config.maxReviewCardsPerDay - todayReviewCount).coerceAtLeast(0)
         val newCardsLeft = (config.maxNewCardsPerDay - todayNewCardsCount).coerceAtLeast(0)
 

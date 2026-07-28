@@ -2,6 +2,7 @@ package com.rinne.libraries.content.generator.core
 
 import com.rinne.libraries.content.generator.core.ai.RinneAiChat
 import com.rinne.libraries.content.generator.core.ai.RinneAiChatMessage
+import com.rinne.libraries.content.generator.core.ai.RinneAiConfig
 import com.rinne.libraries.content.generator.core.ai.RinneAiMessage
 import com.rinne.libraries.content.generator.core.impl.ai.RinneAiChatNetworkProviderImpl
 import kotlinx.serialization.SerialName
@@ -46,11 +47,15 @@ interface RinneCourseContentGenerator {
     ): List<String>
 
     companion object {
-        fun Default(apiKey: String) = RinneAiCourseContentGenerator(RinneAiChat.Default(apiKey))
+        fun Default(apiKey: String): RinneCourseContentGenerator =
+            RinneAiCourseContentGenerator(RinneAiChat.Default(apiKey))
+
+        fun Default(defaultConfig: RinneAiConfig): RinneCourseContentGenerator =
+            RinneAiCourseContentGenerator(RinneAiChat.Default(defaultConfig))
     }
 }
 
-class RinneAiCourseContentGenerator(
+internal class RinneAiCourseContentGenerator(
     private val aiChat: RinneAiChat,
 ) : RinneCourseContentGenerator {
     //TODO

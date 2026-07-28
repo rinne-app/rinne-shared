@@ -2,6 +2,7 @@ package com.rinne.libraries.error.compose.result
 
 import com.rinne.libraries.error.core.RinneException
 
+@Deprecated("Use RinneResultUiState.Type<T> instead")
 sealed interface RinneResultUi<out T> {
     sealed interface WithData<T> : RinneResultUi<T> {
         val data: T

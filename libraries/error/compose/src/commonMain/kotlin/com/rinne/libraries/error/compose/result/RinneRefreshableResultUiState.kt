@@ -7,6 +7,7 @@ import com.rinne.libraries.error.core.result.RinneResultState
 import com.rinne.libraries.error.core.result.state
 import kotlinx.coroutines.flow.SharedFlow
 
+@Deprecated("Use com.rinne.libraries.error.compose.result.new.RinneResultUiState")
 fun <T> RinneRefreshableResultUiState(
     mutableAppResult: MutableRinneResult<T> = MutableRinneResult(),
     defaultState: RinneResultState<T> = mutableAppResult.state,
@@ -16,6 +17,7 @@ fun <T> RinneRefreshableResultUiState(
 )
 
 @Stable
+@Deprecated("Use com.rinne.libraries.error.compose.result.new.RinneResultUiState")
 interface RinneRefreshableResultUiState<T> : RinneResultUiState<T> {
     val refreshSharedFlow: SharedFlow<Unit>
 
@@ -23,4 +25,5 @@ interface RinneRefreshableResultUiState<T> : RinneResultUiState<T> {
 }
 
 @Stable
+@Deprecated("Use com.rinne.libraries.error.compose.result.new.RinneResultUiState")
 interface MutableRinneRefreshableResultUiState<T> : RinneRefreshableResultUiState<T>, MutableRinneResultUiState<T>

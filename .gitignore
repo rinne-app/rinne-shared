@@ -30,3 +30,12 @@ build-logic/.gradle/
 /.kotlin/
 /shared/build/
 /build/
+
+# Gradle and Kotlin build output can be created in every standalone shared module.
+**/build/
+**/.gradle/
+**/.kotlin/
+
+# macOS Finder metadata
+.DS_Store
+**/.DS_Store

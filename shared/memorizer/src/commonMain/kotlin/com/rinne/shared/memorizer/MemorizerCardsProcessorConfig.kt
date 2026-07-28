@@ -1,6 +1,7 @@
 package com.rinne.shared.memorizer
 
 import com.rinne.libraries.date.time.core.RinneDuration
+import com.rinne.libraries.date.time.core.hours
 import com.rinne.libraries.date.time.core.minutes
 
 data class MemorizerCardsProcessorConfig(
@@ -13,5 +14,13 @@ data class MemorizerCardsProcessorConfig(
 ) {
     companion object {
         val DefaultLearningSteps = listOf(1.minutes, 10.minutes)
+
+        val default = MemorizerCardsProcessorConfig(
+            maxNewCardsPerDay = 20,
+            maxReviewCardsPerDay = Int.MAX_VALUE,
+            currentLevel = 1,
+            levelsMixFactor = 0.5,
+            learningStepsDurations = listOf(1.minutes, 10.minutes, 1.hours),
+        )
     }
 }

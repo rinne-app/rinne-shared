@@ -32,12 +32,12 @@ import kotlin.time.ExperimentalTime
 object Mock {
 
     @OptIn(ExperimentalTime::class)
-    fun draftsInfo() = DraftsInfo(
+    fun notesInfo() = NotesInfo(
         username = "tomrinne",
-        drafts = List(5) {
-            DraftInfo(
+        notes = List(5) {
+            NoteInfo(
                 id = "$it",
-                title = "My new draft ${it + 1}",
+                title = "My new note ${it + 1}",
                 text = "Text",
                 dateTime = RinneDateTime.now(),
             )

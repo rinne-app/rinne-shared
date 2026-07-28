@@ -1,5 +1,6 @@
 package com.rinne.shared.network.model.memorizer
 
+import com.rinne.shared.network.model.notes.NetworkNoteInfo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -21,7 +22,28 @@ data class NetworkMemorizerSetInfo(
     @SerialName("statuses") val statuses: List<NetworkMemorizerCardStatus> = emptyList(),
     @SerialName("associations") val associations: List<NetworkMemorizerCardAssociation> = emptyList(),
     @SerialName("folders") val folders: List<NetworkMemorizerSetFolderInfo> = emptyList(),
+    @SerialName("fields") val fields: List<NetworkMemorizerCardFieldType> = emptyList(),
+    @SerialName("notes") val notes: List<NetworkNoteInfo> = emptyList(),
 )
+
+@Serializable
+data class NetworkMemorizerCardFieldType(
+    @SerialName("type") val type: NetworkMemorizerCardFieldTypes,
+    @SerialName("id") val id: String? = null,
+    @SerialName("description") val description: String? = null,
+    @SerialName("language") val language: String? = null,
+)
+
+enum class NetworkMemorizerCardFieldTypes {
+    FRONT, BACK, CUSTOM;
+
+    companion object
+}
+
+fun NetworkMemorizerCardFieldTypes.Companion.valueOfOrFront(name: String): NetworkMemorizerCardFieldTypes {
+    return NetworkMemorizerCardFieldTypes.entries.firstOrNull { it.name == name }
+        ?: NetworkMemorizerCardFieldTypes.FRONT
+}
 
 @Serializable
 data class NetworkMemorizerSet(
@@ -99,11 +121,21 @@ data class NetworkMemorizerCardInfo(
     @SerialName("id") val id: String,
     @SerialName("front") val front: String,
     @SerialName("back") val back: String,
-    @SerialName("level") val level: NetworkMemorizerCardLevel,
+    @SerialName("level") val level: NetworkMemorizerCardLevel? = null,
     @SerialName("associations") val associations: List<NetworkMemorizerCardAssociation> = emptyList(),
     @SerialName("priority") val priority: NetworkMemorizerCardPriority,
     @SerialName("sessions") val sessions: List<NetworkMemorizerCardSessionInfo> = emptyList(),
     @SerialName("notes") val notes: List<NetworkMemorizerCardNoteInfo> = emptyList(),
+    @SerialName("associatedNotes") val associatedNotes: List<NetworkNoteInfo> = emptyList(),
+    @SerialName("fields") val fields: List<NetworkMemorizerCardField> = emptyList(),
+)
+
+@Serializable
+data class NetworkMemorizerCardField(
+    @SerialName("type") val type: NetworkMemorizerCardFieldTypes,
+    @SerialName("data") val data: String,
+    @SerialName("id") val id: String? = null,
+    @SerialName("name") val name: String? = null,
 )
 
 @Serializable

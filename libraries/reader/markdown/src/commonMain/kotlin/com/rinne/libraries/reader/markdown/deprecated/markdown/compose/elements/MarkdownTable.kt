@@ -92,8 +92,8 @@ fun MarkdownTableHeader(
     tableWidth: Dp,
     style: TextStyle,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
-    maxLines: Int = 1,
-    overflow: TextOverflow = TextOverflow.Ellipsis,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
     annotatorSettings: AnnotatorSettings = annotatorSettings(),
 ) {
     val markdownComponents = LocalMarkdownComponents.current
@@ -129,8 +129,8 @@ fun MarkdownTableRow(
     tableWidth: Dp,
     style: TextStyle,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
-    maxLines: Int = 1,
-    overflow: TextOverflow = TextOverflow.Ellipsis,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
     annotatorSettings: AnnotatorSettings = annotatorSettings(),
 ) {
     val markdownComponents = LocalMarkdownComponents.current
@@ -158,8 +158,8 @@ fun MarkdownTableBasicText(
     content: String,
     cell: ASTNode,
     style: TextStyle,
-    maxLines: Int = 1,
-    overflow: TextOverflow = TextOverflow.Ellipsis,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
     annotatorSettings: AnnotatorSettings = annotatorSettings(),
 ) {
     @Suppress("DEPRECATION")

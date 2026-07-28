@@ -59,7 +59,7 @@ internal class RinneResultObserverImpl<T>(
             //TODO: need to continue block execution even if error
             channel.send(RinneResultState.Error(it.asRinneException()))
         }
-    }.stateIn(coroutineScope, SharingStarted.WhileSubscribed(5000), initialValue)
+    }.stateIn(coroutineScope, SharingStarted.Lazily, initialValue)
 
     override fun observeIn(
         coroutineScope: CoroutineScope,
@@ -71,13 +71,48 @@ internal class RinneResultObserverImpl<T>(
 
 fun <T> RinneResultObserver<T>.observeAsRinneResult(
     coroutineScope: CoroutineScope,
-    initialState: RinneResultState<T> = RinneResultState.None
+    initialState: RinneResultState<T> = stateFlow.value,
+    result: MutableRinneResult<T> = MutableRinneResult(initialState),
 ): RinneResult<T> {
-    val result = MutableRinneResult(initialState)
-
     observeIn(coroutineScope) {
         result.setState(it)
     }
 
     return result
+}
+
+
+//Test
+
+internal class RinneResultObserver2Impl<T>(
+    initialValue: RinneResultState<T> = RinneResultState.None,
+    coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob()),
+    private val block: suspend RinneObserverScope<RinneResultState<T>>.() -> Unit
+) : RinneResultObserver<T> {
+    private var lastValue: RinneResultState<T> = initialValue
+
+    //TODO channelFlow vs flow
+    //To mitigate this restriction please use 'channelFlow' builder instead of 'flow')' has been detected.
+    override val stateFlow = channelFlow<RinneResultState<T>> {
+        channel.send(lastValue)
+
+        val scope = RinneObserverScopeImpl<RinneResultState<T>>(
+            coroutineContext = currentCoroutineContext(),
+            onEmit = { channel.send(it) },
+        )
+
+        runCatching {
+            block(scope)
+        }.onFailure {
+            //TODO: need to continue block execution even if error
+            channel.send(RinneResultState.Error(it.asRinneException()))
+        }
+    }.stateIn(coroutineScope, SharingStarted.WhileSubscribed(5000), lastValue)
+
+    override fun observeIn(
+        coroutineScope: CoroutineScope,
+        action: suspend (RinneResultState<T>) -> Unit
+    ) {
+        stateFlow.onEach(action).launchIn(coroutineScope)
+    }
 }

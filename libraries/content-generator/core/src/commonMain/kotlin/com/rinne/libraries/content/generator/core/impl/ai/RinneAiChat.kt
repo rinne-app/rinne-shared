@@ -20,75 +20,247 @@ internal class RinneAiChatImpl(
     }
 
     override suspend fun sendMessage(message: RinneAiChatMessage): RinneAiMessageAnswer {
+        val config = message.customConfig ?: defaultConfig
+
+        return when (config.provider) {
+            RinneAiProvider.OpenAi -> sendOpenAiMessage(message, config)
+            RinneAiProvider.Gemini -> sendGeminiMessage(message, config)
+        }
+    }
+
+    private suspend fun sendOpenAiMessage(
+        message: RinneAiChatMessage,
+        config: RinneAiConfig,
+    ): RinneAiMessageAnswer {
+        if (config.enableWebSearch) {
+            return sendOpenAiResponsesMessage(message, config)
+        }
+
         return networkProvider.httpClient.post("https://api.openai.com/v1/chat/completions") {
             contentType(ContentType.Application.Json)
             headers {
-                bearerAuth(defaultConfig.apiKey)
+                bearerAuth(config.apiKey)
             }
-            setBody(message.asNetworkRequest(defaultConfig))
-        }.body<NetworkAiResponse>().asRinneAiMessageAnswer()
+            setBody(message.asOpenAiRequest(config))
+        }.body<OpenAiResponse>().asRinneAiMessageAnswer()
+    }
+
+    private suspend fun sendOpenAiResponsesMessage(
+        message: RinneAiChatMessage,
+        config: RinneAiConfig,
+    ): RinneAiMessageAnswer {
+        return networkProvider.httpClient.post("https://api.openai.com/v1/responses") {
+            contentType(ContentType.Application.Json)
+            headers {
+                bearerAuth(config.apiKey)
+            }
+            setBody(message.asOpenAiResponsesRequest(config))
+        }.body<OpenAiResponsesResponse>().asRinneAiMessageAnswer()
+    }
+
+    private suspend fun sendGeminiMessage(
+        message: RinneAiChatMessage,
+        config: RinneAiConfig,
+    ): RinneAiMessageAnswer {
+        val model = config.model.geminiKey()
+        val url =
+            "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=${config.apiKey}"
+
+        return networkProvider.httpClient.post(url) {
+            contentType(ContentType.Application.Json)
+            setBody(message.asGeminiRequest(config))
+        }.body<GeminiGenerateContentResponse>().asRinneAiMessageAnswer()
     }
 }
 
-internal fun RinneAiModel.key() = when (this) {
+internal fun RinneAiModel.openAiKey() = when (this) {
+    RinneAiModel.ChatGpt5Nano -> "gpt-5-nano"
     RinneAiModel.ChatGpt4oMini -> "gpt-4o-mini"
     RinneAiModel.ChatGpt4o -> "gpt-4o"
     RinneAiModel.ChatGpt5mini -> "gpt-5-mini"
+    RinneAiModel.ChatGpt41 -> "gpt-4.1"
+    RinneAiModel.ChatGpt41Mini -> "gpt-4.1-mini"
+    RinneAiModel.ChatGpt41Nano -> "gpt-4.1-nano"
+    else -> error("Model is not OpenAI-compatible: $this")
 }
 
+internal fun RinneAiModel.geminiKey() = when (this) {
+    RinneAiModel.Gemini15Flash -> "gemini-1.5-flash"
+    RinneAiModel.Gemini15Pro -> "gemini-1.5-pro"
+    RinneAiModel.Gemini20Flash -> "gemini-2.0-flash"
+    RinneAiModel.Gemini20FlashLite -> "gemini-2.0-flash-lite"
+    RinneAiModel.Gemini3ProPreview -> "gemini-3-pro-preview"
+    RinneAiModel.Gemini3FlashPreview -> "gemini-3-flash-preview"
+    RinneAiModel.Gemini3ProImagePreview -> "gemini-3-pro-image-preview"
+    else -> error("Model is not Gemini-compatible: $this")
+}
 
-internal fun NetworkAiResponse.asRinneAiMessageAnswer(): RinneAiMessageAnswer {
+internal fun OpenAiResponse.asRinneAiMessageAnswer(): RinneAiMessageAnswer {
     return RinneAiMessageAnswer(choices.firstOrNull()?.message?.content ?: "error")
 }
 
-internal fun RinneAiChatMessage.asNetworkRequest(defaultConfig: RinneAiConfig): NetworkAiRequest {
-    val config = (customConfig ?: defaultConfig).model.key()
+internal fun GeminiGenerateContentResponse.asRinneAiMessageAnswer(): RinneAiMessageAnswer {
+    return RinneAiMessageAnswer(candidates.firstOrNull()?.content?.parts?.firstOrNull()?.text ?: "error")
+}
 
-    return NetworkAiRequest(
-        model = config,
+internal fun RinneAiChatMessage.asOpenAiRequest(config: RinneAiConfig): OpenAiRequest {
+    val model = config.model.openAiKey()
+
+    return OpenAiRequest(
+        model = model,
         store = true,
         instructions = current.instructions,
         messages = history.map {
-            NetworkAiMessageRequest(role = "user", content = it.message)
+            OpenAiMessageRequest(role = "user", content = it.message)
         } + listOf(
-            NetworkAiMessageRequest(role = "user", content = current.message),
+            OpenAiMessageRequest(role = "user", content = current.message),
         )
     )
 }
 
+internal fun RinneAiChatMessage.asOpenAiResponsesRequest(config: RinneAiConfig): OpenAiResponsesRequest {
+    val model = config.model.openAiKey()
+
+    return OpenAiResponsesRequest(
+        model = model,
+        instructions = current.instructions,
+        input = history.map {
+            OpenAiMessageRequest(role = "user", content = it.message)
+        } + listOf(
+            OpenAiMessageRequest(role = "user", content = current.message),
+        ),
+        tools = listOf(OpenAiResponsesTool(type = "web_search")),
+    )
+}
+
+internal fun RinneAiChatMessage.asGeminiRequest(config: RinneAiConfig): GeminiGenerateContentRequest {
+    val systemInstruction = current.instructions
+        ?.takeIf { it.isNotBlank() }
+        ?.let {
+            GeminiContent(parts = listOf(GeminiPart(text = it)))
+        }
+
+    return GeminiGenerateContentRequest(
+        systemInstruction = systemInstruction,
+        contents = history.map {
+            GeminiContent(role = "user", parts = listOf(GeminiPart(text = it.message)))
+        } + listOf(
+            GeminiContent(role = "user", parts = listOf(GeminiPart(text = current.message))),
+        ),
+        tools = if (config.enableWebSearch) listOf(GeminiTool(googleSearch = GeminiGoogleSearch())) else null,
+    )
+}
 
 @Serializable
-data class NetworkAiRequest(
+data class OpenAiRequest(
     @SerialName("model") val model: String,
     @SerialName("store") val store: Boolean,
     @SerialName("instructions") val instructions: String?,
-    @SerialName("messages") val messages: List<NetworkAiMessageRequest>,
+    @SerialName("messages") val messages: List<OpenAiMessageRequest>,
 )
 
 @Serializable
-data class NetworkAiMessageRequest(
+data class OpenAiMessageRequest(
     @SerialName("role") val role: String,
     @SerialName("content") val content: String,
 )
 
 @Serializable
-data class NetworkAiResponse(
+data class OpenAiResponse(
     @SerialName("id") val id: String,
     @SerialName("model") val model: String,
     @SerialName("created") val created: Long,
-    @SerialName("choices") val choices: List<NetworkAiChoiceResponse>,
+    @SerialName("choices") val choices: List<OpenAiChoiceResponse>,
 )
 
 @Serializable
-data class NetworkAiChoiceResponse(
+data class OpenAiChoiceResponse(
     @SerialName("index") val index: Int,
-    @SerialName("message") val message: NetworkAiMessageResponse,
+    @SerialName("message") val message: OpenAiMessageResponse,
 )
 
 @Serializable
-data class NetworkAiMessageResponse(
+data class OpenAiMessageResponse(
     @SerialName("role") val role: String,
     @SerialName("content") val content: String,
+)
+
+@Serializable
+data class OpenAiResponsesRequest(
+    @SerialName("model") val model: String,
+    @SerialName("input") val input: List<OpenAiMessageRequest>,
+    @SerialName("instructions") val instructions: String? = null,
+    @SerialName("tools") val tools: List<OpenAiResponsesTool>? = null,
+)
+
+@Serializable
+data class OpenAiResponsesTool(
+    @SerialName("type") val type: String,
+)
+
+@Serializable
+data class OpenAiResponsesResponse(
+    @SerialName("output") val output: List<OpenAiResponsesOutputItem> = emptyList(),
+)
+
+@Serializable
+data class OpenAiResponsesOutputItem(
+    @SerialName("type") val type: String,
+    @SerialName("content") val content: List<OpenAiResponsesContent>? = null,
+)
+
+@Serializable
+data class OpenAiResponsesContent(
+    @SerialName("type") val type: String,
+    @SerialName("text") val text: String? = null,
+)
+
+internal fun OpenAiResponsesResponse.asRinneAiMessageAnswer(): RinneAiMessageAnswer {
+    val text = output
+        .firstOrNull { it.type == "message" }
+        ?.content
+        ?.filter { it.type == "output_text" }
+        ?.joinToString("") { it.text.orEmpty() }
+        ?.takeIf { it.isNotBlank() }
+        ?: "error"
+
+    return RinneAiMessageAnswer(text)
+}
+
+@Serializable
+data class GeminiGenerateContentRequest(
+    @SerialName("system_instruction") val systemInstruction: GeminiContent?,
+    @SerialName("contents") val contents: List<GeminiContent>,
+    @SerialName("tools") val tools: List<GeminiTool>? = null,
+)
+
+@Serializable
+data class GeminiTool(
+    @SerialName("google_search") val googleSearch: GeminiGoogleSearch,
+)
+
+@Serializable
+class GeminiGoogleSearch
+
+@Serializable
+data class GeminiContent(
+    @SerialName("role") val role: String? = null,
+    @SerialName("parts") val parts: List<GeminiPart>,
+)
+
+@Serializable
+data class GeminiPart(
+    @SerialName("text") val text: String? = null,
+)
+
+@Serializable
+data class GeminiGenerateContentResponse(
+    @SerialName("candidates") val candidates: List<GeminiCandidate> = emptyList(),
+)
+
+@Serializable
+data class GeminiCandidate(
+    @SerialName("content") val content: GeminiContent? = null,
 )
 
 /*

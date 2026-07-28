@@ -32,6 +32,9 @@ interface RinneResultUiState<T> {
     }
 }
 
+val <T> RinneResultUiState.Type<T>.isLoading: Boolean
+    get() = this is RinneResultUiState.Type.Loading || this is RinneResultUiState.Type.Updating
+
 fun <T> RinneResultUiState.Type<T>.getDataOrNull() = (this as? RinneResultUiState.Type.WithData<T>)?.data
 
 fun RinneResultUiState<*>.isRefreshable(): Boolean {

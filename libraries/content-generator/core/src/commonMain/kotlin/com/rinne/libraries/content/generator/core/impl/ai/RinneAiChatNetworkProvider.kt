@@ -77,9 +77,10 @@ internal class RinneAiChatNetworkProviderImpl() : RinneAiChatNetworkProvider {
 
             install(Logging) {
                 level = LogLevel.ALL
-                logger = object : Logger {
-                    override fun log(message: String) = RineContentGeneratorLogger.i(message = message)
-                }
+//                TODO
+//                logger = object : Logger {
+//                    override fun log(message: String) = RineContentGeneratorLogger.i(message = message)
+//                }
             }
         }
 }
