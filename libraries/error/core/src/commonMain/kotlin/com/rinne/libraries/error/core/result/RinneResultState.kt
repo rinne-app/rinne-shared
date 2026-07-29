@@ -13,7 +13,3 @@ sealed interface RinneResultState<out T> {
 fun <T> RinneResultState<T>.getDataOrNull(): T? {
     return (this as? RinneResultState.Success<T>)?.data
 }
-
-fun <T> RinneResultState<T>.getDataOrNull(): T? {
-    return (this as? RinneResultState.Success<T>)?.data
-}
