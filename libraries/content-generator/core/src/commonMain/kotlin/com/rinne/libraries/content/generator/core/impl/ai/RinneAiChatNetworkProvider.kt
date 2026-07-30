@@ -14,6 +14,7 @@ import io.ktor.client.request.accept
 import io.ktor.client.request.header
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.URLProtocol.Companion.HTTPS
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
@@ -64,15 +65,18 @@ internal class RinneAiChatNetworkProviderImpl() : RinneAiChatNetworkProvider {
             }
 
             install(HttpRequestRetry) {
-                maxRetries = 3 // количество попыток
-                delayMillis { retry ->
-                    1.minutes.inWholeMilliseconds * retry // 2 секунды * номер попытки
-                }
+                maxRetries = 3
 
-                retryOnExceptionIf { _, cause ->
-                    cause is IOException || cause is io.ktor.serialization.JsonConvertException
+                // A single retryIf call replaces the whole predicate, so 5xx and 429 must be checked
+                // together here rather than in two separate retryOnServerErrors()/retryIf() calls.
+                retryIf(maxRetries = 3) { _, response ->
+                    response.status.value in 500..599 || response.status == HttpStatusCode.TooManyRequests
                 }
-                retryOnServerErrors(maxRetries = 3)
+                retryOnExceptionIf { _, cause -> cause is IOException }
+
+                // Real exponential backoff (1s, 2s, 4s + jitter, capped at 60s) instead of a flat
+                // 1-minute-per-attempt wait — and it honors a Retry-After header when the provider sends one.
+                exponentialDelay()
             }
 
             install(Logging) {

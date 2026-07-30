@@ -3,9 +3,11 @@ package com.rinne.libraries.content.generator.core.impl.ai
 import com.rinne.libraries.content.generator.core.ai.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 internal class RinneAiChatImpl(
     defaultConfig: RinneAiConfig,
@@ -36,26 +38,30 @@ internal class RinneAiChatImpl(
             return sendOpenAiResponsesMessage(message, config)
         }
 
-        return networkProvider.httpClient.post("https://api.openai.com/v1/chat/completions") {
+        val response = networkProvider.httpClient.post("https://api.openai.com/v1/chat/completions") {
             contentType(ContentType.Application.Json)
             headers {
                 bearerAuth(config.apiKey)
             }
             setBody(message.asOpenAiRequest(config))
-        }.body<OpenAiResponse>().asRinneAiMessageAnswer()
+        }
+
+        return response.bodyOrThrow<OpenAiResponse>("OpenAI").asRinneAiMessageAnswer()
     }
 
     private suspend fun sendOpenAiResponsesMessage(
         message: RinneAiChatMessage,
         config: RinneAiConfig,
     ): RinneAiMessageAnswer {
-        return networkProvider.httpClient.post("https://api.openai.com/v1/responses") {
+        val response = networkProvider.httpClient.post("https://api.openai.com/v1/responses") {
             contentType(ContentType.Application.Json)
             headers {
                 bearerAuth(config.apiKey)
             }
             setBody(message.asOpenAiResponsesRequest(config))
-        }.body<OpenAiResponsesResponse>().asRinneAiMessageAnswer()
+        }
+
+        return response.bodyOrThrow<OpenAiResponsesResponse>("OpenAI").asRinneAiMessageAnswer()
     }
 
     private suspend fun sendGeminiMessage(
@@ -66,12 +72,44 @@ internal class RinneAiChatImpl(
         val url =
             "https://generativelanguage.googleapis.com/v1beta/models/$model:generateContent?key=${config.apiKey}"
 
-        return networkProvider.httpClient.post(url) {
+        val response = networkProvider.httpClient.post(url) {
             contentType(ContentType.Application.Json)
             setBody(message.asGeminiRequest(config))
-        }.body<GeminiGenerateContentResponse>().asRinneAiMessageAnswer()
+        }
+
+        return response.bodyOrThrow<GeminiGenerateContentResponse>("Gemini").asRinneAiMessageAnswer()
     }
 }
+
+/**
+ * A non-2xx response (e.g. a 429 rate-limit) has a completely different JSON shape from the success
+ * schema `T` — decoding it as `T` throws an opaque JsonConvertException instead of surfacing what the
+ * provider actually said went wrong. Check the status first and surface the provider's own error message.
+ */
+private suspend inline fun <reified T> HttpResponse.bodyOrThrow(provider: String): T {
+    if (status.isSuccess()) return body()
+
+    val rawBody = runCatching { bodyAsText() }.getOrDefault("")
+    val message = runCatching { aiErrorJson.decodeFromString<AiErrorEnvelope>(rawBody).error.message }
+        .getOrNull()
+        ?: rawBody.ifBlank { null }
+        ?: "no response body"
+
+    error("$provider API error ${status.value} ${status.description}: $message")
+}
+
+private val aiErrorJson = Json { ignoreUnknownKeys = true }
+
+/** Covers both OpenAI's and Gemini's error response shape: {"error": {"message": "...", ...}}. */
+@Serializable
+private data class AiErrorEnvelope(
+    @SerialName("error") val error: AiErrorDetail,
+)
+
+@Serializable
+private data class AiErrorDetail(
+    @SerialName("message") val message: String? = null,
+)
 
 internal fun RinneAiModel.openAiKey() = when (this) {
     RinneAiModel.ChatGpt5Nano -> "gpt-5-nano"
