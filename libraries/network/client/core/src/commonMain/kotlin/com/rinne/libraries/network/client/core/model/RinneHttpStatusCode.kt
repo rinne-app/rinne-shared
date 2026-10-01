@@ -2,6 +2,8 @@ package com.rinne.libraries.network.client.core.model
 
 data class RinneHttpStatusCode(val value: Int, val description: String) {
 
+    fun isSuccess(): Boolean = value in 200..299
+
     companion object {
         val Continue: RinneHttpStatusCode = RinneHttpStatusCode(100, "Continue")
         val SwitchingProtocols: RinneHttpStatusCode = RinneHttpStatusCode(101, "Switching Protocols")

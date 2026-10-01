@@ -1,12 +1,14 @@
 package com.rinne.shared.extensions
 
-import com.android.build.api.dsl.androidLibrary
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import com.rinne.shared.RinneAppInfo
 import org.gradle.api.Project
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import java.io.File
@@ -23,14 +25,27 @@ fun Project.dependencies(configuration: DependencyHandlerScope.(VersionCatalog) 
     }
 }
 
+/**
+ * Declares the module's Android target.
+ *
+ * AGP 9 dropped the `androidLibrary` extension function, so the target is configured through the
+ * extension the `com.android.kotlin.multiplatform.library` plugin registers on the Kotlin
+ * extension. That form also works from a precompiled convention plugin, where script accessors are
+ * not available.
+ */
 fun KotlinMultiplatformExtension.rinneAndroid(
     namespace: String,
-//    action: KotlinMultiplatformAndroidLibraryTarget.() -> Unit = {}
+    action: KotlinMultiplatformAndroidLibraryTarget.() -> Unit = {},
 ) {
-    if (project.shouldEnableAndroid()) androidLibrary {
+    if (!project.shouldEnableAndroid()) return
+
+    (this as ExtensionAware).extensions.configure<KotlinMultiplatformAndroidLibraryTarget>(
+        "androidLibrary"
+    ) {
         this.namespace = namespace
-        this.compileSdk = RinneAppInfo.Android.targetSdk
-//        action(this)
+        this.compileSdk = RinneAppInfo.Android.compileSdk
+        this.minSdk = RinneAppInfo.Android.minSdk
+        action(this)
     }
 }
 

@@ -8,4 +8,8 @@ data class RinneAttributeKey<T : Any>(val name: String) {
     override fun toString(): String = "AttributeKey: $name"
 }
 
-interface RinneAttributes : Map<RinneAttributeKey<*>, Any>
+interface RinneAttributes : Map<RinneAttributeKey<*>, Any> {
+    companion object {
+        val Empty: RinneAttributes = object : RinneAttributes, Map<RinneAttributeKey<*>, Any> by emptyMap() {}
+    }
+}

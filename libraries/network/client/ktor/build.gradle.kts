@@ -8,6 +8,6 @@ plugins {
 kotlin {
     rinneAndroid("com.rinne.libraries.network.client.ktor")
     sourceSets.commonMain.dependencies {
-        implementation(projects.rinneShared.libraries.network.client.core)
+        api(projects.rinneShared.libraries.network.client.core)
     }
 }

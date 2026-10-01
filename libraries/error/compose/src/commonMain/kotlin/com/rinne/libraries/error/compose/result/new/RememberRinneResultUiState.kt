@@ -3,15 +3,10 @@ package com.rinne.libraries.error.compose.result.new
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.retain.retain
 import com.rinne.libraries.error.core.result.MutableRinneResult
 import com.rinne.libraries.error.core.result.RinneResult
 import com.rinne.libraries.error.core.result.observer.RinneResultObserver
-import com.rinne.libraries.error.core.result.observer.observeAsRinneResult
-import com.rinne.libraries.logger.core.RinneLogger
-import com.rinne.libraries.logger.core.extensions.i
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun <T> rememberRinneResultUiState(
@@ -40,13 +35,29 @@ fun <T, R> rememberRinneResultUiState(
     return retain(state) { state.map(transformer) }
 }
 
+/**
+ * Bridges [observer]'s [RinneResultObserver.stateFlow] into a retained [MutableRinneResult] so the
+ * last known value survives this composable leaving and re-entering composition — e.g. navigating
+ * to a detail screen and back.
+ *
+ * The [LaunchedEffect] re-subscribes on every fresh entry into composition, rather than starting the
+ * subscription once inside [retain]'s calculation: a `rememberCoroutineScope()`-backed subscription
+ * started only there is cancelled the first time this leaves composition, and since `retain` never
+ * re-runs that calculation for a value it already has, the subscription was never restarted — the
+ * state froze at whatever it last was. (That was the bug behind a screen's data silently going stale
+ * after visiting a detail screen and coming back — folder expansion on the Notes home was one
+ * symptom, since the whole tree stopped updating there, not just the expanded folder.)
+ */
 @Composable
 fun <T> rememberRinneResultUiState(
     observer: RinneResultObserver<T>,
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
     loggerTag: String? = null,
 ): RinneResultUiState<T> {
-    val result = retain { observer.observeAsRinneResult(coroutineScope = coroutineScope) }
+    val result = retain { MutableRinneResult<T>(observer.stateFlow.value) }
+
+    LaunchedEffect(observer, result) {
+        observer.stateFlow.collect { result.setState(it) }
+    }
 
     return rememberRinneResultUiState(result, loggerTag)
 }
@@ -54,11 +65,14 @@ fun <T> rememberRinneResultUiState(
 @Composable
 fun <T, R> rememberRinneResultUiState(
     observer: RinneResultObserver<T>,
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
     loggerTag: String? = null,
     transformer: RinneResultUiStateTransformer<T, R>
 ): RinneResultUiState<R> {
-    val result = retain { observer.observeAsRinneResult(coroutineScope = coroutineScope) }
+    val result = retain { MutableRinneResult<T>(observer.stateFlow.value) }
+
+    LaunchedEffect(observer, result) {
+        observer.stateFlow.collect { result.setState(it) }
+    }
 
     return rememberRinneResultUiState(result = result, transformer = transformer, loggerTag = loggerTag)
 }

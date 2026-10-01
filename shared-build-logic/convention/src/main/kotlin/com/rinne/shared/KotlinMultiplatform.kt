@@ -27,8 +27,8 @@ internal fun Project.configureKotlinMultiplatform(includeAndroid: Boolean = shou
 //            androidLibrary()
 //        }
 
+        // Compose Multiplatform no longer publishes an iosX64 (Intel simulator) variant.
         listOf(
-            iosX64(),
             iosArm64(),
             iosSimulatorArm64(),
         ).forEach {

@@ -589,7 +589,8 @@ private fun XmlTag.collectImageCaptions(target: MutableMap<String, String>) {
             ?: getAttribute("title")
             ?: getAttribute("description")
         if (!id.isNullOrBlank() && !caption.isNullOrBlank()) {
-            target.putIfAbsent(id, caption.normalizeFb2Text())
+            // putIfAbsent is JVM-only; keep the first caption seen for an id.
+            if (id !in target) target[id] = caption.normalizeFb2Text()
         }
     }
 
@@ -638,7 +639,8 @@ private fun XmlTag.collectInlineFootnotesByPattern(target: MutableMap<String, St
             val id = match.groupValues[1]
             val text = match.groupValues[2].normalizeFb2Text()
             if (text.isNotBlank()) {
-                target.putIfAbsent(id, text)
+                // putIfAbsent is JVM-only; keep the first footnote seen for an id.
+                if (id !in target) target[id] = text
             }
         }
     }
