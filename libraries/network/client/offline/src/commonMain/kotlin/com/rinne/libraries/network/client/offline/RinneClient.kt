@@ -1,6 +1,8 @@
 package com.rinne.libraries.network.client.offline
 
 import com.rinne.libraries.date.time.core.inWholeMilliseconds
+import com.rinne.libraries.date.time.core.milliseconds
+import com.rinne.libraries.logger.core.extensions.i
 import com.rinne.libraries.network.client.core.RinneHttpClient
 import com.rinne.libraries.network.client.core.RinneHttpResponse
 import com.rinne.libraries.network.client.core.RinneNetworkException
@@ -10,6 +12,7 @@ import com.rinne.libraries.network.client.core.model.asTextOrNull
 import com.rinne.libraries.network.client.core.model.with
 import com.rinne.libraries.network.client.offline.cache.RinneCacheOptions
 import com.rinne.libraries.network.client.offline.cache.RinneCachePolicy
+import com.rinne.libraries.network.client.offline.cache.RinneCacheRefreshReport
 import com.rinne.libraries.network.client.offline.cache.RinneResponseCache
 import com.rinne.libraries.network.client.offline.cache.newest
 import com.rinne.libraries.network.client.offline.mutation.IDEMPOTENCY_KEY_HEADER
@@ -28,31 +31,36 @@ import com.rinne.libraries.network.client.offline.store.InMemoryResponseStore
 import com.rinne.libraries.network.client.offline.store.RinneMutationStatus
 import com.rinne.libraries.network.client.offline.store.RinnePendingMutation
 import com.rinne.libraries.network.client.offline.store.RinneStoredResponse
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.job
 import kotlinx.coroutines.channels.ProducerScope
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.transformWhile
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
-import kotlin.reflect.KType
-import kotlin.reflect.typeOf
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 
 /**
  * HTTP client with a local source of truth. GETs return a [Flow] that emits the stored value, then the
@@ -97,6 +105,8 @@ class RinneClient(transport: RinneHttpClient, configure: RinneClientConfig.() ->
             scopeProvider = config.scope,
             onSent = { invalidate(it.scope, it.invalidates) },
             coroutineScope = config.coroutineScope,
+            revisionField = config.revisionField,
+            logger = config.logger,
         )
     }
     private val outboxBlocked = MutableStateFlow(false)
@@ -182,7 +192,7 @@ class RinneClient(transport: RinneHttpClient, configure: RinneClientConfig.() ->
             idMappings(scope),
             fetchState,
         ) { entry, mutations, mappings, fetch ->
-            resolve<T>(type, spec.path, options, localOnly, entry, mutations, mappings, fetch)
+            resolve<T>(type, spec, options, localOnly, entry, mutations, mappings, fetch)
         }
             .onEach { fetchJob?.start() }
             .filterNotNull()
@@ -228,7 +238,7 @@ class RinneClient(transport: RinneHttpClient, configure: RinneClientConfig.() ->
 
     private fun <T> resolve(
         type: KType,
-        path: String,
+        spec: RinneRequestSpec,
         options: RinneCacheOptions,
         localOnly: Boolean,
         stored: RinneStoredResponse?,
@@ -236,6 +246,7 @@ class RinneClient(transport: RinneHttpClient, configure: RinneClientConfig.() ->
         mappings: Map<String, String>,
         fetch: FetchState,
     ): RinneNetworkResult<T>? {
+        val path = spec.path
         val fetched = (fetch as? FetchState.Done)?.entry
         val base = newest(stored, fetched)
         val decoded = base?.let { entry ->
@@ -247,7 +258,7 @@ class RinneClient(transport: RinneHttpClient, configure: RinneClientConfig.() ->
             }
         }
         @Suppress("UNCHECKED_CAST")
-        val result = overlay.apply(decoded as T?, type, path, base?.storedAtMillis, mutations, mappings)
+        val result = overlay.apply(decoded as T?, type, spec, base?.storedAtMillis, mutations, mappings)
         val value = result.value
         val pending = result.hasPendingMutations
 
@@ -363,6 +374,19 @@ class RinneClient(transport: RinneHttpClient, configure: RinneClientConfig.() ->
 
     // region Local data management
 
+    /** Outbox progress of the current scope, e.g. for a "not synced" indicator. */
+    fun observeSyncState(): Flow<RinneSyncState> {
+        val outbox = outbox ?: return flowOf(RinneSyncState.Idle)
+        return combine(observeMutations(), outbox.isSyncing, outbox.lastError) { mutations, syncing, error ->
+            RinneSyncState(
+                pendingCount = mutations.count { it.status == RinneMutationStatus.Pending },
+                failedCount = mutations.count { it.status == RinneMutationStatus.Failed },
+                isSyncing = syncing,
+                lastError = error,
+            )
+        }
+    }
+
     /** Unsent and rejected mutations of the current scope, e.g. to warn before logging out. */
     fun observeMutations(): Flow<List<RinnePendingMutation>> =
         mutationStore?.observe(config.scope())?.map { all -> all.filter { it.status != RinneMutationStatus.Sent } }
@@ -384,6 +408,75 @@ class RinneClient(transport: RinneHttpClient, configure: RinneClientConfig.() ->
         invalidations.emit(Invalidation(scope, tags))
     }
 
+    /**
+     * Brings the whole local copy up to date: runs [prefetch] (reads to keep even if no screen has
+     * opened them yet), then refetches every stored response of the backend that the prefetch didn't
+     * just fetch, [parallelism] at a time. Responses the server no longer has are dropped; failures
+     * keep the stored response. Queued mutations are sent first so the refetched data includes them.
+     */
+    suspend fun refreshCache(
+        prefetch: List<suspend () -> Unit> = emptyList(),
+        parallelism: Int = DEFAULT_REFRESH_PARALLELISM,
+    ): RinneCacheRefreshReport {
+        if (!config.connectivity.isOnline.value) throw RinneNetworkException.NoConnection()
+        val scope = config.scope()
+        val startedAt = cache.writeMarker()
+        outbox?.retryNow()
+
+        val permits = Semaphore(parallelism)
+        val prefetched = coroutineScope {
+            prefetch.map { read -> async { permits.withPermit { refreshOutcome { read() } } } }.awaitAll()
+        }
+        val stored = cache.getAllPersistent(scope)
+            // Third-party pages (absolute URLs) aren't the backend's; they refresh when reopened.
+            .filter { it.storedAtMillis < startedAt && !it.path.contains(ABSOLUTE_URL_MARKER) }
+        val refetched = coroutineScope {
+            stored.map { entry -> async { permits.withPermit { refetch(scope, entry) } } }.awaitAll()
+        }
+
+        val outcomes = prefetched + refetched
+        return RinneCacheRefreshReport(
+            refreshed = outcomes.count { it == RefreshOutcome.Refreshed },
+            removed = outcomes.count { it == RefreshOutcome.Removed },
+            failed = outcomes.count { it == RefreshOutcome.Failed },
+        ).also { config.logger?.i(message = "Cache refresh: $it") }
+    }
+
+    private enum class RefreshOutcome { Refreshed, Removed, Failed }
+
+    private suspend fun refetch(scope: String, entry: RinneStoredResponse): RefreshOutcome {
+        val spec = RinneRequestSpec(method = RinneHttpMethod.Get, path = entry.path, parameters = entry.parameters)
+        val maxAge = entry.expiresAtMillis
+            ?.takeIf { it > entry.storedAtMillis }
+            ?.let { (it - entry.storedAtMillis).milliseconds }
+        val options = RinneCacheOptions(
+            policy = RinneCachePolicy.NetworkOnly,
+            maxAge = maxAge,
+            persist = true,
+            observe = false,
+            tags = entry.tags,
+        )
+        return refreshOutcome(onGone = { cache.remove(entry.key) }) { cache.fetch(entry.key, scope, spec, options) }
+    }
+
+    private suspend fun refreshOutcome(onGone: suspend () -> Unit = {}, fetch: suspend () -> Unit): RefreshOutcome = try {
+        fetch()
+        RefreshOutcome.Refreshed
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: RinneNetworkException.Http) {
+        when (e.statusCode) {
+            NOT_FOUND, GONE -> {
+                onGone()
+                RefreshOutcome.Removed
+            }
+
+            else -> RefreshOutcome.Failed
+        }
+    } catch (e: Throwable) {
+        RefreshOutcome.Failed
+    }
+
     /** Drops stored responses and the outbox (including unsent mutations) of [scope]. */
     suspend fun clearLocalData(scope: String = config.scope()) {
         cache.clear(scope)
@@ -394,6 +487,10 @@ class RinneClient(transport: RinneHttpClient, configure: RinneClientConfig.() ->
 
     private companion object {
         const val INVALIDATIONS_BUFFER = 64
+        const val DEFAULT_REFRESH_PARALLELISM = 4
+        const val ABSOLUTE_URL_MARKER = "://"
+        const val NOT_FOUND = 404
+        const val GONE = 410
     }
 }
 

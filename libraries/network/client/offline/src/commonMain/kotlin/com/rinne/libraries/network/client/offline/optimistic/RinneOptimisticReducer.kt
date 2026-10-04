@@ -12,6 +12,10 @@ data class RinneOptimisticMutation<out B>(
     val pathParameters: Map<String, String>,
     /** Values captured by the target (GET) path pattern. */
     val targetParameters: Map<String, String>,
+    /** Query parameters of the target request, e.g. a list filter or page cursor. */
+    val targetQuery: Map<String, List<String>> = emptyMap(),
+    /** Query parameters of the mutation. */
+    val mutationQuery: Map<String, List<String>> = emptyMap(),
     /** Id of the entity the mutation creates: the server id once known, the temporary id before. */
     val entityId: String?,
     val status: RinneMutationStatus,

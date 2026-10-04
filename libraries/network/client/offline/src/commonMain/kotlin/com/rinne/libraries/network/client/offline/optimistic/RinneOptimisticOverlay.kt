@@ -5,6 +5,7 @@ import com.rinne.libraries.logger.core.extensions.e
 import com.rinne.libraries.network.client.offline.RinneBodyCodec
 import com.rinne.libraries.network.client.offline.asMethodName
 import com.rinne.libraries.network.client.offline.mutation.replaceTempIds
+import com.rinne.libraries.network.client.offline.request.RinneRequestSpec
 import com.rinne.libraries.network.client.offline.store.RinneMutationStatus
 import com.rinne.libraries.network.client.offline.store.RinnePendingMutation
 import kotlin.reflect.KType
@@ -25,11 +26,12 @@ internal class RinneOptimisticOverlay(
     fun <T> apply(
         base: T?,
         type: KType,
-        path: String,
+        target: RinneRequestSpec,
         baseStoredAtMillis: Long?,
         mutations: List<RinnePendingMutation>,
         mappings: Map<String, String>,
     ): RinneOverlayResult<T> {
+        val path = target.path
         val candidates = reducers.filter { it.targets(type, path) }
         if (candidates.isEmpty() || mutations.isEmpty()) return RinneOverlayResult(base, false)
 
@@ -38,7 +40,7 @@ internal class RinneOptimisticOverlay(
         mutations.filter { it.appliesOnTopOf(baseStoredAtMillis) }.forEach { mutation ->
             val mutationPath = mutation.path.replaceTempIds(mappings)
             candidates.forEach { reducer ->
-                val applied = reducer.applyTo(value, path, mutation, mutationPath, mappings) ?: return@forEach
+                val applied = reducer.applyTo(value, target, mutation, mutationPath, mappings) ?: return@forEach
                 value = applied.value
                 hasPending = hasPending || mutation.status == RinneMutationStatus.Pending
             }
@@ -62,14 +64,14 @@ internal class RinneOptimisticOverlay(
     @Suppress("UNCHECKED_CAST")
     private fun <T> RinneOptimisticReducer<*, *>.applyTo(
         current: T?,
-        targetPath: String,
+        target: RinneRequestSpec,
         mutation: RinnePendingMutation,
         mutationPath: String,
         mappings: Map<String, String>,
     ): RinneOverlayResult<T>? {
         if (method.asMethodName() != mutation.method) return null
         val pathParameters = mutationPattern.match(mutationPath) ?: return null
-        val targetParameters = targetPattern.match(targetPath) ?: return null
+        val targetParameters = targetPattern.match(target.path) ?: return null
 
         return try {
             val body = mutation.body?.let { codec.decode(it.replaceTempIds(mappings), bodyType) }
@@ -77,6 +79,8 @@ internal class RinneOptimisticOverlay(
                 body = body,
                 pathParameters = pathParameters,
                 targetParameters = targetParameters,
+                targetQuery = target.parameters,
+                mutationQuery = mutation.parameters,
                 entityId = mutation.serverId ?: mutation.tempId?.let { mappings[it] ?: it },
                 status = mutation.status,
                 createdAtMillis = mutation.createdAtMillis,

@@ -39,6 +39,9 @@ data class RecordedRequest(
 class FakeServer : RinneHttpClient, RinneConnectivity {
     override val isOnline = MutableStateFlow(true)
     val items = mutableListOf(Item("a", "A"))
+
+    /** Item revisions; a PATCH with a stale `If-Match` is rejected with 409. */
+    val revisions = mutableMapOf("a" to 1L)
     val requests = mutableListOf<RecordedRequest>()
 
     /** Every call that reached the transport, including ones that failed for lack of network. */
@@ -96,11 +99,17 @@ class FakeServer : RinneHttpClient, RinneConnectivity {
             }
 
             method == "PATCH" && segments.size == 2 -> {
-                val index = items.indexOfFirst { it.id == segments[1] }
+                val id = segments[1]
+                val index = items.indexOfFirst { it.id == id }
                 if (index == -1) return request.respond(404, "")
+                val revision = revisions.getOrPut(id) { 1 }
+                val ifMatch = request.headers["If-Match"]
+                if (ifMatch != null && ifMatch.trim('"') != revision.toString()) return request.respond(409, "")
+
                 val patch = Json.decodeFromString<ItemPatch>(body!!)
                 items[index] = items[index].copy(name = patch.name ?: items[index].name)
-                request.respond(200, "")
+                revisions[id] = revision + 1
+                request.respond(200, """{"id":"$id","revision":${revision + 1}}""")
             }
 
             method == "DELETE" && segments.size == 2 -> {

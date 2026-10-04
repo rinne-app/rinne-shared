@@ -32,6 +32,15 @@ suspend fun <T> Flow<RinneNetworkResult<T>>.await(): T = first { it.isFinal }.va
 /** Plain values; an [RinneNetworkResult.Error] is thrown into the collector. */
 fun <T> Flow<RinneNetworkResult<T>>.values(): Flow<T> = map { it.valueOrThrow() }
 
+/**
+ * The final value, but only if it came from the network now: a stored fallback after a failed
+ * refresh throws that failure instead.
+ */
+suspend fun <T> Flow<RinneNetworkResult<T>>.awaitFresh(): T = when (val result = first { it.isFinal }) {
+    is RinneNetworkResult.Data -> result.refreshError?.let { throw it } ?: result.value
+    is RinneNetworkResult.Error -> throw result.cause
+}
+
 fun <T> RinneNetworkResult<T>.valueOrThrow(): T = when (this) {
     is RinneNetworkResult.Data -> value
     is RinneNetworkResult.Error -> throw cause

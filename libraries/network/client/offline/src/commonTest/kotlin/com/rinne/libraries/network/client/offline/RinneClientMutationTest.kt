@@ -7,6 +7,7 @@ import com.rinne.libraries.network.client.offline.mutation.RinneMutationResult
 import com.rinne.libraries.network.client.offline.mutation.isTempId
 import com.rinne.libraries.network.client.offline.store.InMemoryMutationStore
 import com.rinne.libraries.network.client.offline.store.RinneMutationStatus
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
@@ -239,6 +240,78 @@ class RinneClientMutationTest {
         val patches = server.requests.filter { it.method == "PATCH" }
         assertEquals(listOf("\"1\"", null), patches.map { it.ifMatch })
         assertEquals("B", server.items.single().name)
+    }
+
+    @Test
+    fun conflictResendUsesANewIdempotencyKey() = runTest {
+        val server = FakeServer()
+        val client = testClient(server) { conflictResolver = RinneConflictResolver { _, _ -> RinneConflictResolution.Overwrite } }
+        server.failures += 409
+
+        client.renameVersioned("a", "B", revision = 1)
+
+        val keys = server.requests.filter { it.method == "PATCH" }.map { it.idempotencyKey }
+        assertEquals(2, keys.toSet().size)
+    }
+
+    @Test
+    fun conflictCanBeReplacedByAnotherRequest() = runTest {
+        val server = FakeServer()
+        val client = testClient(server) {
+            conflictResolver = RinneConflictResolver { _, _ ->
+                RinneConflictResolution.Replace(body = """{"name":"B (copy)"}""", method = "POST", path = "items")
+            }
+        }
+        server.failures += 409
+
+        client.renameVersioned("a", "B", revision = 1)
+
+        assertEquals(listOf(Item("a", "A"), Item("srv1", "B (copy)")), server.items)
+    }
+
+    @Test
+    fun queuedEditOfTheSameResourceIsRebasedOntoTheNewRevision() = runTest {
+        val server = FakeServer().apply { responseDelayMillis = 100 }
+        val client = testClient(server)
+
+        val first = async { client.renameVersioned("a", "B", revision = 1) }
+        runCurrent()
+        // Made while the first edit is in flight, against the revision the UI still shows.
+        val second = async { client.renameVersioned("a", "C", revision = 1) }
+        first.await()
+        second.await()
+
+        assertEquals(listOf("\"1\"", "\"2\""), server.requests.filter { it.method == "PATCH" }.map { it.ifMatch })
+        assertEquals("C", server.items.single().name)
+    }
+
+    @Test
+    fun editMadeAfterTheFirstWasSentIsRebasedToo() = runTest {
+        val server = FakeServer()
+        val client = testClient(server)
+        client.renameVersioned("a", "B", revision = 1)
+
+        // The UI hasn't refetched yet and still sends revision 1.
+        client.renameVersioned("a", "C", revision = 1)
+
+        assertEquals(listOf("\"1\"", "\"2\""), server.requests.filter { it.method == "PATCH" }.map { it.ifMatch })
+    }
+
+    @Test
+    fun syncStateTracksTheOutbox() = runTest {
+        val server = FakeServer()
+        val client = testClient(server)
+        server.goOffline()
+        client.createItem("B")
+
+        assertEquals(1, client.observeSyncState().first().pendingCount)
+
+        server.goOnline()
+        runCurrent()
+
+        val synced = client.observeSyncState().first()
+        assertTrue(synced.isSynced)
+        assertEquals(null, synced.lastError)
     }
 
     private suspend fun RinneClient.renameVersioned(id: String, name: String, revision: Long) = patch<Unit>("items/$id") {

@@ -26,3 +26,13 @@ sealed interface RinneMutationResult<out R> {
         override val entityId: String? = null
     }
 }
+
+/**
+ * The server's result, or — while the mutation waits in the outbox — a local stand-in built from
+ * what the caller sent and the entity's temporary id.
+ */
+inline fun <R> RinneMutationResult<R>.valueOrElse(local: (entityId: String?) -> R): R = when (this) {
+    is RinneMutationResult.Sent -> value
+    is RinneMutationResult.Queued -> local(entityId)
+    RinneMutationResult.ResolvedLocally -> local(null)
+}
