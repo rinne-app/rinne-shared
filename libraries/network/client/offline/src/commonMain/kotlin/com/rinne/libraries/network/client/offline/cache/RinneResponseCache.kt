@@ -43,6 +43,14 @@ internal class RinneResponseCache(
 
     suspend fun get(key: String): RinneStoredResponse? = newest(memory.get(key), persistent?.get(key))
 
+    /** Responses kept across restarts; in-memory ones (searches, third-party pages) are throwaway. */
+    suspend fun getAllPersistent(scope: String): List<RinneStoredResponse> = persistent?.getAll(scope).orEmpty()
+
+    suspend fun remove(key: String) {
+        memory.remove(key)
+        persistent?.remove(key)
+    }
+
     suspend fun markStale(scope: String, tags: Set<String>) {
         memory.markStale(scope, tags)
         persistent?.markStale(scope, tags)
@@ -96,6 +104,7 @@ internal class RinneResponseCache(
                 key = key,
                 scope = scope,
                 path = spec.path,
+                parameters = spec.parameters,
                 body = response.body.asTextOrNull().orEmpty(),
                 etag = response.headers[ETAG],
                 storedAtMillis = now,
@@ -110,6 +119,9 @@ internal class RinneResponseCache(
         target.put(entry)
         return entry
     }
+
+    /** A point in write time: everything stored before it is older, everything stored after it newer. */
+    suspend fun writeMarker(): Long = nextStoredAt()
 
     /**
      * Strictly increasing write time, so of two entries for one key the later write always wins,

@@ -7,6 +7,8 @@ data class RinneStoredResponse(
     val key: String,
     val scope: String,
     val path: String,
+    /** Query of the request, so the stored response can be refetched as it was requested. */
+    val parameters: Map<String, List<String>> = emptyMap(),
     val body: String,
     val etag: String?,
     val storedAtMillis: Long,
@@ -25,6 +27,8 @@ interface RinneResponseStore {
     fun observe(key: String): Flow<RinneStoredResponse?>
 
     suspend fun get(key: String): RinneStoredResponse?
+
+    suspend fun getAll(scope: String): List<RinneStoredResponse>
 
     suspend fun put(response: RinneStoredResponse)
 

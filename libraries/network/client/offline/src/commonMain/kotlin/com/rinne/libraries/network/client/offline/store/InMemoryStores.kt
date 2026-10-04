@@ -13,6 +13,8 @@ class InMemoryResponseStore : RinneResponseStore {
 
     override suspend fun get(key: String): RinneStoredResponse? = entries.value[key]
 
+    override suspend fun getAll(scope: String): List<RinneStoredResponse> = entries.value.values.filter { it.scope == scope }
+
     override suspend fun put(response: RinneStoredResponse) = entries.update { it + (response.key to response) }
 
     override suspend fun remove(key: String) = entries.update { it - key }

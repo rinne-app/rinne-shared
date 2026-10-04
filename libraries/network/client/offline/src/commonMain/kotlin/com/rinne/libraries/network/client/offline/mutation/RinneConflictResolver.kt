@@ -20,6 +20,15 @@ sealed interface RinneConflictResolution {
     /** Resend without the precondition (last write wins). */
     data object Overwrite : RinneConflictResolution
 
-    /** Resend with a new body, e.g. merged with the server state, optionally against a new revision. */
-    data class Replace(val body: String, val ifMatch: String?) : RinneConflictResolution
+    /**
+     * Send a different request instead: a body merged with the server state (optionally against a
+     * new revision), or another endpoint altogether — e.g. a POST that saves the local edit as a copy.
+     * `null` [method]/[path] keep the original ones.
+     */
+    data class Replace(
+        val body: String?,
+        val ifMatch: String? = null,
+        val method: String? = null,
+        val path: String? = null,
+    ) : RinneConflictResolution
 }

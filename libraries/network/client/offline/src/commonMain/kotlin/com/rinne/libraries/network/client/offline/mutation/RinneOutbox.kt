@@ -1,5 +1,9 @@
 package com.rinne.libraries.network.client.offline.mutation
 
+import com.rinne.libraries.logger.core.RinneLogger
+import com.rinne.libraries.logger.core.extensions.e
+import com.rinne.libraries.logger.core.extensions.i
+import com.rinne.libraries.logger.core.extensions.w
 import com.rinne.libraries.network.client.core.RinneHttpResponse
 import com.rinne.libraries.network.client.core.RinneNetworkException
 import com.rinne.libraries.network.client.core.isSuccessful
@@ -27,6 +31,9 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -59,6 +66,8 @@ internal class RinneOutbox(
     private val scopeProvider: () -> String,
     private val onSent: suspend (RinnePendingMutation) -> Unit,
     private val coroutineScope: CoroutineScope,
+    private val revisionField: String,
+    private val logger: RinneLogger?,
 ) {
     private val queueMutex = Mutex()
     private val drainMutex = Mutex()
@@ -66,6 +75,21 @@ internal class RinneOutbox(
     private val events = MutableSharedFlow<Event>(extraBufferCapacity = EVENTS_BUFFER)
     private val kicks = Channel<Unit>(Channel.CONFLATED)
     private var retryJob: Job? = null
+
+    /**
+     * Revisions the server moved past, per resource: an edit made against the old revision before
+     * the refetch caught up is rebased onto the new one instead of hitting a false conflict.
+     */
+    private val revisionRebases = mutableMapOf<String, Map<String, String>>()
+
+    private val syncingState = MutableStateFlow(false)
+    private val lastErrorState = MutableStateFlow<Throwable?>(null)
+
+    /** `true` while a mutation is on its way to the server. */
+    val isSyncing: StateFlow<Boolean> = syncingState.asStateFlow()
+
+    /** Why the queue last stopped or rejected a mutation; cleared by the next successful send. */
+    val lastError: StateFlow<Throwable?> = lastErrorState.asStateFlow()
 
     private sealed interface Event {
         val mutationIds: Set<String>
@@ -154,10 +178,16 @@ internal class RinneOutbox(
         val all = store.getAll(mutation.scope)
         val queued = all.filter { it.status == RinneMutationStatus.Pending && it.id != inFlightId }
         val sequenced = mutation.copy(sequence = (all.maxOfOrNull { it.sequence } ?: 0) + 1)
-        val plan = RinneMutationCoalescer.plan(sequenced, queued, store.getIdMappings(mutation.scope))
+        val mappings = store.getIdMappings(mutation.scope)
+        val plan = RinneMutationCoalescer.plan(sequenced.withRebasedRevision(mappings), queued, mappings)
 
         if (plan.removeIds.isNotEmpty()) store.delete(plan.removeIds)
         plan.insert?.let { store.upsert(it) }
+        logger?.i(
+            message = "Outbox: queued ${mutation.method} ${mutation.path}" +
+                (if (plan.removeIds.isNotEmpty()) ", coalesced ${plan.removeIds.size}" else "") +
+                (if (plan.insert == null) ", resolved locally" else ""),
+        )
         plan.insert
     }
 
@@ -165,21 +195,30 @@ internal class RinneOutbox(
         val scope = scopeProvider()
         purgeSent(scope)
 
-        while (true) {
-            val head = queueMutex.withLock { nextToSend(scope) } ?: return@withLock
-            val result = try {
-                Result.success(executor.execute(head.toSpec(store.getIdMappings(scope))))
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Throwable) {
-                Result.failure(e)
-            }
+        try {
+            while (true) {
+                val head = queueMutex.withLock { nextToSend(scope) } ?: return@withLock
+                syncingState.value = true
+                val result = try {
+                    Result.success(executor.execute(head.toSpec(store.getIdMappings(scope))))
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Throwable) {
+                    Result.failure(e)
+                }
+                // Resolved outside the queue lock: a resolver may itself be slow or touch the client.
+                val conflict = result.getOrNull()
+                    ?.takeIf { response -> response.status?.value?.let(RinneRetryPolicy::isConflictStatus) == true }
+                    ?.let { response -> conflictResolver.resolve(head, response) }
 
-            val keepGoing = queueMutex.withLock {
-                inFlightId = null
-                handleResult(head, result)
+                val keepGoing = queueMutex.withLock {
+                    inFlightId = null
+                    handleResult(head, result, conflict)
+                }
+                if (!keepGoing) return@withLock
             }
-            if (!keepGoing) return@withLock
+        } finally {
+            syncingState.value = false
         }
     }
 
@@ -190,6 +229,7 @@ internal class RinneOutbox(
             val head = pending.firstOrNull() ?: return null
 
             if (!connectivity.isOnline.value) {
+                lastErrorState.value = RinneNetworkException.NoConnection()
                 emitBlocked(pending, RinneNetworkException.NoConnection())
                 return null
             }
@@ -212,7 +252,11 @@ internal class RinneOutbox(
     }
 
     /** Returns whether the queue should continue with the next mutation. */
-    private suspend fun handleResult(mutation: RinnePendingMutation, result: Result<RinneHttpResponse>): Boolean {
+    private suspend fun handleResult(
+        mutation: RinnePendingMutation,
+        result: Result<RinneHttpResponse>,
+        conflict: RinneConflictResolution?,
+    ): Boolean {
         val response = result.getOrElse { return backOff(mutation, it) }
         val status = response.status?.value ?: return backOff(mutation, null)
 
@@ -222,7 +266,7 @@ internal class RinneOutbox(
                 true
             }
 
-            RinneRetryPolicy.isConflictStatus(status) -> resolveConflict(mutation, response)
+            conflict != null -> resolveConflict(mutation, response, conflict)
             RinneRetryPolicy.isRetryableStatus(status) -> backOff(mutation, RinneNetworkException.Http(response))
             else -> {
                 fail(mutation, RinneNetworkException.Http(response))
@@ -241,16 +285,24 @@ internal class RinneOutbox(
         )
         if (mutation.tempId != null && serverId != null) store.putIdMapping(mutation.scope, mutation.tempId, serverId)
         store.upsert(sent)
+        rebaseRevisions(mutation, response)
+        lastErrorState.value = null
+        logger?.i(message = "Outbox: sent ${mutation.method} ${mutation.path} after ${sent.attempts} attempt(s)")
         events.emit(Event.Sent(sent, response))
         coroutineScope.launch { onSent(sent) }
     }
 
-    private suspend fun resolveConflict(mutation: RinnePendingMutation, response: RinneHttpResponse): Boolean {
+    private suspend fun resolveConflict(
+        mutation: RinnePendingMutation,
+        response: RinneHttpResponse,
+        resolution: RinneConflictResolution,
+    ): Boolean {
+        logger?.w(message = "Outbox: conflict on ${mutation.method} ${mutation.path} -> $resolution")
         if (mutation.attempts + 1 >= retryPolicy.maxAttempts) {
             fail(mutation, RinneNetworkException.Http(response))
             return true
         }
-        val resolved = when (val resolution = conflictResolver.resolve(mutation, response)) {
+        val resolved = when (resolution) {
             RinneConflictResolution.Discard -> {
                 fail(mutation, RinneNetworkException.Http(response))
                 return true
@@ -258,14 +310,48 @@ internal class RinneOutbox(
 
             RinneConflictResolution.Overwrite -> mutation.copy(headers = mutation.headers.withoutIfMatch())
             is RinneConflictResolution.Replace -> mutation.copy(
+                method = resolution.method ?: mutation.method,
+                path = resolution.path ?: mutation.path,
                 body = resolution.body,
                 headers = mutation.headers.withoutIfMatch() +
                     listOfNotNull(resolution.ifMatch?.let { IF_MATCH to it }),
             )
         }
-        store.upsert(resolved.copy(attempts = mutation.attempts + 1))
+        // A different request now: the server must not replay the stored conflict for the old key.
+        store.upsert(resolved.copy(attempts = mutation.attempts + 1, idempotencyKey = randomId()))
         return true
     }
+
+    /**
+     * After a versioned write succeeds, queued writes of the same resource still carry the revision
+     * it was based on; move them to the revision the server just returned.
+     */
+    private suspend fun rebaseRevisions(mutation: RinnePendingMutation, response: RinneHttpResponse) {
+        val oldRevision = mutation.ifMatch() ?: return
+        val newValue = extractEntityId(response.body.asTextOrNull(), revisionField) ?: return
+        val newRevision = if (oldRevision.startsWith('"')) "\"$newValue\"" else newValue
+        if (newRevision == oldRevision) return
+
+        val mappings = store.getIdMappings(mutation.scope)
+        val resource = mutation.resourceKey(mappings)
+        revisionRebases[resource] = revisionRebases[resource].orEmpty() + (oldRevision to newRevision)
+        store.getAll(mutation.scope)
+            .filter { it.status == RinneMutationStatus.Pending && it.resourceKey(mappings) == resource }
+            .forEach { queued -> queued.withRebasedRevision(mappings).takeIf { it != queued }?.let { store.upsert(it) } }
+    }
+
+    private fun RinnePendingMutation.withRebasedRevision(mappings: Map<String, String>): RinnePendingMutation {
+        val rebases = revisionRebases[resourceKey(mappings)] ?: return this
+        var revision = ifMatch() ?: return this
+        while (true) revision = rebases[revision] ?: break
+        return if (revision == ifMatch()) this else copy(headers = headers.withoutIfMatch() + (IF_MATCH to revision))
+    }
+
+    private fun RinnePendingMutation.resourceKey(mappings: Map<String, String>) =
+        "$scope ${path.replaceTempIds(mappings).trim('/')}"
+
+    private fun RinnePendingMutation.ifMatch(): String? =
+        headers.entries.firstOrNull { it.key.equals(IF_MATCH, ignoreCase = true) }?.value
 
     private suspend fun backOff(mutation: RinnePendingMutation, cause: Throwable?): Boolean {
         val attempts = mutation.attempts + 1
@@ -276,6 +362,11 @@ internal class RinneOutbox(
 
         val nextAttemptAt = clock() + retryPolicy.delayMillis(attempts)
         store.upsert(mutation.copy(attempts = attempts, nextAttemptAtMillis = nextAttemptAt))
+        lastErrorState.value = cause
+        logger?.w(
+            message = "Outbox: ${mutation.method} ${mutation.path} attempt $attempts failed (${cause?.message}), " +
+                "retrying in ${nextAttemptAt - clock()} ms",
+        )
         scheduleRetry(nextAttemptAt)
         emitBlocked(store.getAll(mutation.scope).filter { it.status == RinneMutationStatus.Pending }, cause)
         return false
@@ -289,6 +380,8 @@ internal class RinneOutbox(
             failureMessage = cause.message,
         )
         store.upsert(failed)
+        lastErrorState.value = cause
+        logger?.e(message = "Outbox: ${mutation.method} ${mutation.path} rejected", throwable = cause)
         events.emit(Event.Failed(failed, cause))
     }
 

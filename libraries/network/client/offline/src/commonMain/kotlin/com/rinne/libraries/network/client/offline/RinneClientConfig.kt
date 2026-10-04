@@ -3,6 +3,7 @@ package com.rinne.libraries.network.client.offline
 import com.rinne.libraries.date.time.core.RinneDateTime
 import com.rinne.libraries.date.time.core.RinneDuration
 import com.rinne.libraries.date.time.core.hours
+import com.rinne.libraries.logger.core.RinneLogger
 import com.rinne.libraries.network.client.offline.cache.RinneCachePolicy
 import com.rinne.libraries.network.client.offline.connectivity.RinneConnectivity
 import com.rinne.libraries.network.client.offline.interceptor.RinneInterceptor
@@ -42,6 +43,15 @@ class RinneClientConfig internal constructor() {
 
     var clock: () -> Long = { RinneDateTime.now().epochMillis }
 
+    /**
+     * Response field holding an entity's revision. When a write sent with `If-Match` succeeds, queued
+     * writes of the same resource are moved to the revision found here.
+     */
+    var revisionField: String = DEFAULT_REVISION_FIELD
+
+    /** Receives outbox events (queued, sent, retried, rejected); `null` disables them. */
+    var logger: RinneLogger? = null
+
     /** Runs shared fetches and the outbox; must outlive individual screens. */
     var coroutineScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
@@ -59,5 +69,6 @@ class RinneClientConfig internal constructor() {
 
     private companion object {
         const val DEFAULT_SCOPE = "default"
+        const val DEFAULT_REVISION_FIELD = "revision"
     }
 }
