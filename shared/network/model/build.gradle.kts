@@ -10,5 +10,7 @@ kotlin {
     sourceSets.commonMain.dependencies {
         // DTOs expose RinneTimestamp, so consumers need it on their compile classpath.
         api(projects.rinneShared.libraries.dateTime.core)
+        // Sync payloads are JSON objects.
+        api(sharedLibs.kotlinx.serialization.json)
     }
 }
