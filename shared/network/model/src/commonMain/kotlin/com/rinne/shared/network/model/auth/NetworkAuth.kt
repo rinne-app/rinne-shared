@@ -7,6 +7,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NetworkRegisterRequest(
     val email: String,
+    /** Unique; 3–30 characters of `a-z`, `0-9`, `_` and `.` (stored lowercase). `auth.nickname_taken` if used. */
+    val nickname: String,
     val password: String,
 )
 
@@ -42,5 +44,7 @@ data class NetworkAuthSession(
 data class NetworkUser(
     val id: String,
     val email: String,
+    /** `null` only for accounts created before nicknames existed. */
+    val nickname: String? = null,
     val createdAt: RinneTimestamp,
 )

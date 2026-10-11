@@ -1,8 +1,9 @@
-import com.rinne.shared.extensions.rinneAndroid
+import com.rinne.extensions.rinneAndroid
 
+// A Compose library: it uses the client's Compose convention (no macOS native target, where the UI is
+// SwiftUI). Only the client includes this module.
 plugins {
-    alias(sharedLibs.plugins.rinne.multiplatform.library)
-    alias(sharedLibs.plugins.rinne.multiplatform.compose)
+    id("rinne.multiplatform.compose.core")
 }
 
 kotlin {

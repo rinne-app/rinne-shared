@@ -1,17 +1,4 @@
 package com.rinne.libraries.error.core
 
-open class RinneException(
-    override val message: String? = null,
-    override val cause: Throwable? = null,
-) : Exception(message, cause)
-
-fun RinneException(throwable: Throwable): RinneException {
-    if (throwable is RinneException) return throwable
-
-    return RinneException(throwable.message, throwable)
-}
-
-fun Throwable.asRinneException(): RinneException {
-    printStackTrace()
-    return RinneException(this)
-}
+/** Wraps the cause of a bug with context for the logs. Never shown to the user. */
+class RinneException(message: String, cause: Throwable? = null) : Exception(message, cause)

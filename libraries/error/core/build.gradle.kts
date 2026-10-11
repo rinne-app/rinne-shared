@@ -8,5 +8,9 @@ kotlin {
     rinneAndroid("com.rinne.libraries.error.core")
     sourceSets.commonMain.dependencies {
         implementation(projects.rinneShared.libraries.logger.core)
+        api(sharedLibs.arrow.core)
+    }
+    sourceSets.commonTest.dependencies {
+        implementation(sharedLibs.kotlinx.coroutines.test)
     }
 }

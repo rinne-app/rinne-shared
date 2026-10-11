@@ -31,6 +31,10 @@ gradlePlugin {
             id = "rinne.shared.multiplatform.kotlin.serialization"
             implementationClass = "MultiplatformKotlinSerializationConventionPlugin"
         }
+        register("sharedStringsConventionPlugin") {
+            id = "rinne.shared.strings"
+            implementationClass = "SharedStringsConventionPlugin"
+        }
         register("sharedMultiplatformKtorClientConventionPlugin") {
             id = "rinne.shared.multiplatform.ktor.client"
             implementationClass = "MultiplatformKtorClientConventionPlugin"

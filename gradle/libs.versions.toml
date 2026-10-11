@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.3.0"
+kotlin = "2.3.20"
 ktor = "3.4.0"
 agp = "8.10.1"
 kotlinx-coroutines = "1.10.2"
@@ -7,11 +7,13 @@ kotlinx-datetime = "0.7.1"
 kotlinx-serialization = "1.10.0"
 kermit = "2.0.8"
 koin = "4.1.1"
+arrow = "2.2.1"
 
 
 [libraries]
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
 
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
 

@@ -38,9 +38,15 @@ internal fun Project.configureKotlinMultiplatform(includeAndroid: Boolean = shou
             }
         }
 
+        // The native macOS app shares these libraries (Apple Silicon only).
+        macosArm64()
+
         sourceSets.apply {
             commonMain.dependencies {
                 if (path != ":rinne-shared:libraries:date-time:core") implementationProject(":rinne-shared:libraries:date-time:core")
+            }
+            commonTest.dependencies {
+                implementation(kotlin("test"))
             }
         }
     }

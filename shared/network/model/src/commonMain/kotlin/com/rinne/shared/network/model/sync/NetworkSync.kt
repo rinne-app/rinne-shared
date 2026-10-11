@@ -84,10 +84,20 @@ enum class NetworkSyncOp {
     @SerialName("delete") Delete,
 }
 
-/** `POST /api/v1/sync/push` — applied in order; at most 500 mutations per request. */
+/**
+ * `POST /api/v1/sync/push` — applied in order; at most 500 mutations per request. The server stops at
+ * the first mutation the device must act on (`error`, `sync.entity_gone`, `sync.result_unknown`, a
+ * rejected create) and answers every later one [NetworkSyncMutationStatus.Deferred].
+ */
 @Serializable
 data class NetworkSyncPushRequest(
     val mutations: List<NetworkSyncMutation>,
+    /**
+     * Identifies this installation and account (a UUID kept in the device's database). The results
+     * of a device's mutations are kept until it acknowledges them: a push acknowledges every earlier
+     * result of the same device whose mutation it doesn't contain again.
+     */
+    val deviceId: String? = null,
 )
 
 @Serializable
@@ -106,6 +116,8 @@ data class NetworkSyncMutation(
      * `null` clears the field. Ignored for deletes.
      */
     val fields: JsonObject = JsonObject(emptyMap()),
+    /** This mutation was sent before and its result never arrived (the same [mutationId] again). */
+    val retry: Boolean = false,
 )
 
 @Serializable
@@ -128,6 +140,11 @@ data class NetworkSyncMutationResult(
     val reason: String? = null,
     /** Why a mutation was rejected or failed. */
     val error: NetworkApiError? = null,
+    /**
+     * For a rejected mutation of an entity the user can read: its current server state (the DTO;
+     * absent if it is deleted), with [version]. The device writes it under its remaining local edits.
+     */
+    val entity: JsonObject? = null,
 )
 
 @Serializable
@@ -146,7 +163,38 @@ enum class NetworkSyncMutationStatus {
 
     /** The server failed unexpectedly; keep it in the outbox and retry later. */
     @SerialName("error") Error,
+
+    /**
+     * Not applied and not recorded: an earlier mutation of the request needs the device to act
+     * first. Send it again (it may be changed before that: the server never saw it).
+     */
+    @SerialName("deferred") Deferred,
 }
+
+/** `POST /api/v1/sync/fetch` — the current state of single entities (reconciling one row). */
+@Serializable
+data class NetworkSyncFetchRequest(
+    val spaceId: String,
+    val type: String,
+    /** At most 500. */
+    val ids: List<String>,
+)
+
+@Serializable
+data class NetworkSyncFetchResponse(
+    /** One per requested id, in request order. */
+    val entities: List<NetworkSyncFetchedEntity>,
+)
+
+@Serializable
+data class NetworkSyncFetchedEntity(
+    val id: String,
+    /** `false`: no such entity in the space (never existed, purged, or not readable). */
+    val found: Boolean,
+    val version: Long? = null,
+    /** The entity's DTO; absent when it is deleted (a tombstone) or not found. */
+    val entity: JsonObject? = null,
+)
 
 @Serializable
 data class NetworkSyncFieldConflict(
