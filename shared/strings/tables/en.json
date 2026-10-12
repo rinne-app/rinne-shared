@@ -5,6 +5,7 @@
   },
   "strings": {
     "osAppName": "Rinne",
+    "osNSMicrophoneUsageDescription": "Record voice notes in your notes.",
     "languageName": "English",
 
     "actionTryAgain": "Try again",
