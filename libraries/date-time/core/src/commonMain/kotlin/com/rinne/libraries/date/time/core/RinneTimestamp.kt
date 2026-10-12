@@ -39,3 +39,12 @@ value class RinneTimestamp(val epochMillis: Long) : Comparable<RinneTimestamp> {
             runCatching { parseIso(input) }.getOrNull()
     }
 }
+
+/** A moment's place in its week: [dayOfWeek] 1 = Monday … 7 = Sunday, [minuteOfDay] 0 … 1439. */
+data class RinneWeekTime(val dayOfWeek: Int, val minuteOfDay: Int)
+
+/** Where this moment falls in the week of [zone] (a scope's schedule, `SCOPE-10`). */
+fun RinneTimestamp.weekTime(zone: RinneTimeZone = RinneTimeZone.Local): RinneWeekTime {
+    val (day, minute) = RinneTimestampKotlinx.weekTime(epochMillis, zone.id)
+    return RinneWeekTime(day, minute)
+}

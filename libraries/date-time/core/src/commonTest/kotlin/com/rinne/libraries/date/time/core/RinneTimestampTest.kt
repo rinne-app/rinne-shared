@@ -1,5 +1,6 @@
 package com.rinne.libraries.date.time.core
 
+import com.rinne.libraries.date.time.core.kotlinx.RinneTimestampKotlinx
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -68,5 +69,12 @@ class RinneTimestampTest {
         val clock = RinneClock { RinneTimestamp(42) }
 
         assertEquals(RinneTimestamp(42), clock.now())
+    }
+
+    @Test
+    fun `a moment knows its weekday and minute in a zone`() {
+        // Thursday, 8 October 2026, 12:30 UTC; 15:30 in Kyiv.
+        assertEquals(4 to 750, RinneTimestampKotlinx.weekTime(1_791_462_600_123, "UTC"))
+        assertEquals(4 to 930, RinneTimestampKotlinx.weekTime(1_791_462_600_123, "Europe/Kyiv"))
     }
 }

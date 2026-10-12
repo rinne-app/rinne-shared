@@ -1,7 +1,11 @@
 package com.rinne.shared.network.model
 
+import com.rinne.shared.network.model.attachments.NetworkAttachment
 import com.rinne.shared.network.model.notes.NetworkNote
 import com.rinne.shared.network.model.notes.NetworkNoteFolder
+import com.rinne.shared.network.model.scopes.NetworkScope
+import com.rinne.shared.network.model.scopes.NetworkScopeItem
+import com.rinne.shared.network.model.scopes.NetworkScopeSchedule
 import com.rinne.shared.network.model.sync.SyncField
 import com.rinne.shared.network.model.sync.SyncFieldValue
 import com.rinne.shared.network.model.sync.readSyncField
@@ -24,6 +28,20 @@ class SyncFieldsTest {
     fun `every sync field is a property of its DTO`() {
         assertFieldsOf(NetworkNote.serializer().descriptor, NetworkNote.Fields.All)
         assertFieldsOf(NetworkNoteFolder.serializer().descriptor, NetworkNoteFolder.Fields.All)
+        assertFieldsOf(NetworkAttachment.serializer().descriptor, NetworkAttachment.Fields.All)
+        assertFieldsOf(NetworkScope.serializer().descriptor, NetworkScope.Fields.All)
+    }
+
+    @Test
+    fun `nested values round-trip as fields`() {
+        val items = listOf(NetworkScopeItem(NetworkScopeItem.AppNotes, "folder-1"))
+        val schedule = NetworkScopeSchedule(enabled = true, days = listOf(1, 2, 3, 4, 5), startMinute = 540, endMinute = 1080)
+        val fields = syncFields {
+            set(NetworkScope.Fields.Items, items)
+            set(NetworkScope.Fields.Schedule, schedule)
+        }
+        assertEquals(SyncFieldValue.Present(items), fields.readSyncField(NetworkScope.Fields.Items))
+        assertEquals(SyncFieldValue.Present(schedule), fields.readSyncField(NetworkScope.Fields.Schedule))
     }
 
     @Test
