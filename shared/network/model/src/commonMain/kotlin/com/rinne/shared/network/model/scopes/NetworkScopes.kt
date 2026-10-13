@@ -54,6 +54,9 @@ data class NetworkScopeItem(
     companion object {
         /** A notes folder. */
         const val AppNotes = "notes"
+
+        /** A task folder. */
+        const val AppTasks = "tasks"
     }
 }
 

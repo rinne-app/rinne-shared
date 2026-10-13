@@ -7,6 +7,9 @@ import com.rinne.shared.network.model.scopes.NetworkScope
 import com.rinne.shared.network.model.scopes.NetworkScopeItem
 import com.rinne.shared.network.model.scopes.NetworkScopeSchedule
 import com.rinne.shared.network.model.sync.SyncField
+import com.rinne.shared.network.model.tasks.NetworkTask
+import com.rinne.shared.network.model.tasks.NetworkTaskFolder
+import com.rinne.shared.network.model.tasks.NetworkTaskStatus
 import com.rinne.shared.network.model.sync.SyncFieldValue
 import com.rinne.shared.network.model.sync.readSyncField
 import com.rinne.shared.network.model.sync.syncFields
@@ -30,6 +33,9 @@ class SyncFieldsTest {
         assertFieldsOf(NetworkNoteFolder.serializer().descriptor, NetworkNoteFolder.Fields.All)
         assertFieldsOf(NetworkAttachment.serializer().descriptor, NetworkAttachment.Fields.All)
         assertFieldsOf(NetworkScope.serializer().descriptor, NetworkScope.Fields.All)
+        assertFieldsOf(NetworkTask.serializer().descriptor, NetworkTask.Fields.All)
+        assertFieldsOf(NetworkTaskFolder.serializer().descriptor, NetworkTaskFolder.Fields.All)
+        assertFieldsOf(NetworkTaskStatus.serializer().descriptor, NetworkTaskStatus.Fields.All)
     }
 
     @Test
@@ -55,5 +61,15 @@ class SyncFieldsTest {
         assertEquals(SyncFieldValue.Absent, fields.readSyncField(NetworkNote.Fields.Content))
         val wrongType = JsonObject(mapOf("title" to JsonObject(emptyMap())))
         assertIs<SyncFieldValue.Invalid>(wrongType.readSyncField(NetworkNote.Fields.Title))
+    }
+
+    @Test
+    fun `lists of a task and a folder round-trip as fields`() {
+        val fields = syncFields {
+            set(NetworkTask.Fields.NoteIds, listOf("note-1", "note-2"))
+            set(NetworkTaskFolder.Fields.Statuses, NetworkTaskStatus.BuiltIn.Defaults)
+        }
+        assertEquals(SyncFieldValue.Present(listOf("note-1", "note-2")), fields.readSyncField(NetworkTask.Fields.NoteIds))
+        assertEquals(SyncFieldValue.Present(NetworkTaskStatus.BuiltIn.Defaults), fields.readSyncField(NetworkTaskFolder.Fields.Statuses))
     }
 }
