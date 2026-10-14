@@ -8,6 +8,29 @@ import kotlin.test.assertTrue
 class StringTablesTest {
 
     @Test
+    fun `German translates every English key and names the language`() {
+        val german = BundledStringTables.table("de")!!
+        assertEquals(BundledStringTables.english.values.keys, german.values.keys)
+        assertEquals(StringValue.Plain("Deutsch"), german.values["languageName"])
+    }
+
+    @Test
+    fun `German table and regional fallback distinguish one from other`() {
+        val rules = listOf(
+            BundledStringTables.table("de")!!.pluralRules!!,
+            BuiltInPluralRules.forLocale("de-DE")!!,
+        )
+        rules.forEach { rule ->
+            assertEquals(PluralCategory.One, rule.select(1))
+            listOf(0L, 2L, 11L, 21L, 101L).forEach { count ->
+                assertEquals(PluralCategory.Other, rule.select(count), "count $count")
+            }
+            assertEquals(PluralCategory.Other, rule.select(PluralOperands(n = 1.5, i = 1, v = 1, w = 1, f = 5, t = 5)))
+            assertEquals(PluralCategory.Other, rule.select(PluralOperands(n = 1.0, i = 1, v = 1)))
+        }
+    }
+
+    @Test
     fun `every bundled table parses and English defines every key`() {
         val english = BundledStringTables.english
         BundledStringTables.locales.forEach { locale ->

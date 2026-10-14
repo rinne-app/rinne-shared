@@ -220,6 +220,7 @@ internal class PluralRule private constructor(private val condition: Condition) 
 object BuiltInPluralRules {
     private val rules: Map<String, Map<String, String>> = mapOf(
         "en" to mapOf("one" to "i = 1 and v = 0"),
+        "de" to mapOf("one" to "i = 1 and v = 0"),
         "ru" to mapOf(
             "one" to "v = 0 and i % 10 = 1 and i % 100 != 11",
             "few" to "v = 0 and i % 10 = 2..4 and i % 100 != 12..14",
