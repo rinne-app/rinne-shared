@@ -410,6 +410,7 @@
     "scopeAddHint": "Die Einträge bleiben an ihrem Platz. Der Kontext bestimmt nur, was du siehst.",
     "scopeSearchFolders": "Ordner suchen",
     "scopeInScope": "Im Kontext",
+    "scopeAllScopes": "Alle Kontexte",
     "scopeIncludedWithHolder": "Über %1$s enthalten",
     "scopeAddCountHolder": "%1$d hinzufügen",
     "scopeLanguageSheetHolder": "Nur für „%1$s“. Andere Kontexte behalten ihre Sprache.",

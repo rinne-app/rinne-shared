@@ -419,6 +419,7 @@
     "scopeAddHint": "Items stay where they are. The scope only decides what you see.",
     "scopeSearchFolders": "Search folders",
     "scopeInScope": "In scope",
+    "scopeAllScopes": "All scopes",
     "scopeIncludedWithHolder": "Included with %1$s",
     "scopeAddCountHolder": "Add %1$d",
     "scopeLanguageSheetHolder": "For “%1$s” only. Other scopes keep their own.",

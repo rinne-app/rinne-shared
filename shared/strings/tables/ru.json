@@ -407,6 +407,7 @@
     "scopeAddHint": "Всё остаётся на своих местах. Область лишь решает, что вы видите.",
     "scopeSearchFolders": "Поиск папок",
     "scopeInScope": "В области",
+    "scopeAllScopes": "Все области",
     "scopeIncludedWithHolder": "Входит вместе с «%1$s»",
     "scopeAddCountHolder": "Добавить (%1$d)",
     "scopeLanguageSheetHolder": "Только для «%1$s». У других областей свой язык.",
