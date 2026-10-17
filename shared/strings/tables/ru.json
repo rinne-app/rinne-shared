@@ -325,6 +325,8 @@
     "notesSettingsBooks": "Заметки о книгах",
     "notesSettingsFirstBlock": "Первый блок",
     "notesSettingsEditor": "Редактор",
+    "notesSettingsAutoHideBars": "\u0410\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u0435\u0441\u043a\u0438 \u0441\u043a\u0440\u044b\u0432\u0430\u0442\u044c \u043f\u0430\u043d\u0435\u043b\u0438",
+    "notesSettingsAutoHideBarsHint": "\u0421\u043a\u0440\u044b\u0432\u0430\u0442\u044c \u043f\u0440\u0438 \u043f\u0440\u043e\u043a\u0440\u0443\u0442\u043a\u0435 \u0432\u043d\u0438\u0437; \u043f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0442\u044c \u043f\u0440\u0438 \u043f\u0440\u043e\u043a\u0440\u0443\u0442\u043a\u0435 \u0432\u0432\u0435\u0440\u0445 \u0438\u043b\u0438 \u043e\u0442\u043a\u0440\u044b\u0442\u043e\u0439 \u043a\u043b\u0430\u0432\u0438\u0430\u0442\u0443\u0440\u0435",
     "notesSettingsOutline": "Прокрутка по оглавлению",
     "notesSettingsOutlineHint": "Переход между заголовками с правого края",
     "notesSettingsCentered": "Заголовки по центру",
