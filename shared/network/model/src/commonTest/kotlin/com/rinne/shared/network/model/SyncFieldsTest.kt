@@ -1,5 +1,9 @@
 package com.rinne.shared.network.model
 
+import com.rinne.shared.network.model.calendar.NetworkCalendar
+import com.rinne.shared.network.model.calendar.NetworkCalendarEvent
+import com.rinne.shared.network.model.calendar.NetworkCalendarTemplate
+import com.rinne.shared.network.model.calendar.NetworkCalendarTemplateEvent
 import com.rinne.shared.network.model.attachments.NetworkAttachment
 import com.rinne.shared.network.model.notes.NetworkNote
 import com.rinne.shared.network.model.notes.NetworkNoteFolder
@@ -29,6 +33,10 @@ class SyncFieldsTest {
 
     @Test
     fun `every sync field is a property of its DTO`() {
+        assertFieldsOf(NetworkCalendar.serializer().descriptor, NetworkCalendar.Fields.All)
+        assertFieldsOf(NetworkCalendarEvent.serializer().descriptor, NetworkCalendarEvent.Fields.All)
+        assertFieldsOf(NetworkCalendarTemplate.serializer().descriptor, NetworkCalendarTemplate.Fields.All)
+        assertFieldsOf(NetworkCalendarTemplateEvent.serializer().descriptor, NetworkCalendarTemplateEvent.Fields.All)
         assertFieldsOf(NetworkNote.serializer().descriptor, NetworkNote.Fields.All)
         assertFieldsOf(NetworkNoteFolder.serializer().descriptor, NetworkNoteFolder.Fields.All)
         assertFieldsOf(NetworkAttachment.serializer().descriptor, NetworkAttachment.Fields.All)

@@ -29,6 +29,7 @@ data class NetworkTask(
     val onHome: Boolean = false,
     val noteIds: List<String> = emptyList(),
     val references: List<String> = emptyList(),
+    val dueDate: String? = null,
 ) {
     companion object {
         const val SyncType = "task"
@@ -45,9 +46,10 @@ data class NetworkTask(
         val OnHome = SyncField("onHome", Boolean.serializer())
         val NoteIds = SyncField("noteIds", ListSerializer(String.serializer()))
 
+        val DueDate = SyncField("dueDate", String.serializer().nullable)
         val References = SyncField("references", ListSerializer(String.serializer()))
 
-        val All: List<SyncField<*>> = listOf(Title, Description, FolderId, ParentId, Status, Position, OnHome, NoteIds, References)
+        val All: List<SyncField<*>> = listOf(Title, Description, FolderId, ParentId, Status, Position, OnHome, NoteIds, References, DueDate)
     }
 }
 

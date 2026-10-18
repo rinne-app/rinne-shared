@@ -9,6 +9,7 @@ import kotlin.time.toDuration
 
 internal const val MAX_SECONDS = Long.MAX_VALUE / 2
 
+@kotlinx.serialization.Serializable
 @ConsistentCopyVisibility
 data class RinneDuration internal constructor(
     val seconds: Long,

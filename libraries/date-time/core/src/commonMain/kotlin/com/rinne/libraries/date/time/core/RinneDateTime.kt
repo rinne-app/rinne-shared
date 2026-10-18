@@ -38,6 +38,7 @@ interface RinneTime : RinneInstant {
     companion object : RinneTimeProvider by RinneDateTimeConfig.timeProvider
 }
 
+@kotlinx.serialization.Serializable(with = RinneDateIsoSerializer::class)
 interface RinneDate : RinneInstant {
     val year: Int
     val month: RinneMonth

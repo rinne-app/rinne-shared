@@ -19,6 +19,14 @@ internal class RinneDateKotlinx(
     override val epochMillis: Long
         get() = dateKotlinx.atStartOfDayIn(timeZone.asKotlinx()).epochSeconds.seconds.inWholeMilliseconds
 
+    override fun equals(other: Any?): Boolean = other is RinneDateKotlinx && dateKotlinx == other.dateKotlinx
+    override fun hashCode(): Int = dateKotlinx.hashCode()
+    override fun toString(): String = dateKotlinx.toString()
+    override fun compareTo(other: RinneInstant): Int = when (other) {
+        is RinneDate -> epochDay.compareTo(other.epochDay)
+        else -> epochMillis.compareTo(other.epochMillis)
+    }
+
     override fun plus(value: Long, unit: RinneDateTimeUnit.DateUnit): RinneDate {
         return RinneDateKotlinx(dateKotlinx.plus(value, unit.asKotlinx() as DateTimeUnit.DateBased))
     }
@@ -63,8 +71,8 @@ internal class RinneDateTimeKotlinx(
 
     override val timeZone: RinneTimeZone = RinneTimeZone.Local,
 ) : RinneDateTime {
-    override val time: RinneTime = this
-    override val date: RinneDate = this
+    override val time: RinneTime get() = RinneTimeKotlinx(hour, minute, second, nanosecond, timeZone)
+    override val date: RinneDate get() = RinneDateKotlinx(year, month, day, timeZone)
 
     constructor(dateTime: LocalDateTime) : this(
         year = dateTime.year,
@@ -89,7 +97,7 @@ internal class RinneDateTimeKotlinx(
 
     @OptIn(ExperimentalTime::class)
     override val epochMillis: Long
-        get() = dateTimeKotlinx.toInstant(timeZone.asKotlinx()).epochSeconds.seconds.inWholeMilliseconds
+        get() = dateTimeKotlinx.toInstant(timeZone.asKotlinx()).toEpochMilliseconds()
 
     @OptIn(ExperimentalTime::class)
     override fun plus(value: Long, unit: RinneDateTimeUnit): RinneDateTime {
@@ -97,7 +105,7 @@ internal class RinneDateTimeKotlinx(
         val instant = dateTimeKotlinx.toInstant(tz)
         val newInstant = instant.plus(value, unit.asKotlinx(), tz)
         val newDateTime = newInstant.toLocalDateTime(tz)
-        return RinneDateTimeKotlinx(newDateTime)
+        return RinneDateTimeKotlinx(newDateTime).copy(timeZone = timeZone)
     }
 
     override fun plus(value: Long, unit: RinneDateTimeUnit.TimeUnit): RinneDateTime {
@@ -136,6 +144,7 @@ internal class RinneDateTimeKotlinx(
 }
 
 fun RinneTimeZone.asKotlinx() = when (this) {
+    is RinneTimeZone.Named -> TimeZone.of(value)
     RinneTimeZone.Local -> TimeZone.currentSystemDefault()
 }
 
