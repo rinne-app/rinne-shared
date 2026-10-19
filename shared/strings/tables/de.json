@@ -1098,6 +1098,31 @@
     "tasksScheduleUpcomingHolder": {"one": "%1$d anstehend", "other": "%1$d anstehend"},
     "tasksSchedulePastHolder": {"one": "%1$d vergangen", "other": "%1$d vergangen"},
 
-    "tasksPinned": "Angeheftet"
+    "tasksPinned": "Angeheftet",
+
+    "calendarLinkSource": "Aufgabe, Notiz oder Übung verknüpfen",
+    "calendarThisEventIs": "Dieser Termin ist",
+    "calendarPractice": "Übung",
+    "calendarLesson": "Lektion",
+    "calendarPlainEventHint": "Ein einfacher Termin. Hänge Notizen oder Sets an, wenn sie helfen.",
+    "calendarChangeSource": "Ändern, was dieser Termin ist",
+    "calendarAttachSearchAll": "Notizen, Aufgaben, Sets, Bücher suchen",
+    "calendarSets": "Sets",
+    "calendarBooks": "Bücher",
+    "calendarCourses": "Kurse",
+    "calendarRecent": "Zuletzt",
+    "calendarAttachCountHolder": "Anhängen (%1$d)",
+    "calendarAttachLine": "Notiz, Aufgabe oder Set anhängen",
+    "calendarNewEventKindHolder": "Neuer Termin · %1$s",
+    "calendarDayTemplate": "Tagesvorlage",
+    "calendarWeekTemplate": "Wochenvorlage",
+    "calendarGraph": "Graph",
+    "calendarNoLinksHint": "Noch keine Links.\nTippe {{ in einer Notiz, Aufgabe oder einem Termin, um diesen zu verknüpfen.",
+    "calendarEventsCount": "Termine",
+    "calendarPlanned": "geplant",
+    "calendarAppliedCount": "angewendet",
+    "calendarSelectEvent": "Wähle einen Termin oder drücke ⌘N.",
+    "calendarFromTemplate": "Aus Vorlage",
+    "calendarSettings": "Einstellungen"
   }
 }

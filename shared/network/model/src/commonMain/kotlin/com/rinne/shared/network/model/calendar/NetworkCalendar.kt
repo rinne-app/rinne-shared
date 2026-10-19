@@ -58,7 +58,8 @@ data class NetworkCalendarEvent(
     val time: NetworkEventTime,
     val calendarId: String = NetworkCalendar.Personal,
     val description: String = "",
-    val taskId: String? = null,
+    /** What the event is (`rinne://task/<id>`, `rinne://note/<id>`); null for a plain event. */
+    val source: String? = null,
     val reminderMinutes: Int? = null,
     val references: List<String> = emptyList(),
     val templateId: String? = null,
@@ -70,12 +71,12 @@ data class NetworkCalendarEvent(
         val Time = SyncField("time", NetworkEventTime.serializer())
         val CalendarId = SyncField("calendarId", String.serializer())
         val Description = SyncField("description", String.serializer())
-        val TaskId = SyncField("taskId", String.serializer().nullable)
+        val Source = SyncField("source", String.serializer().nullable)
         val ReminderMinutes = SyncField("reminderMinutes", Int.serializer().nullable)
         val References = SyncField("references", ListSerializer(String.serializer()))
         val TemplateId = SyncField("templateId", String.serializer().nullable)
         val ApplicationId = SyncField("applicationId", String.serializer().nullable)
-        val All: List<SyncField<*>> = listOf(Title, Time, CalendarId, Description, TaskId, ReminderMinutes, References, TemplateId, ApplicationId)
+        val All: List<SyncField<*>> = listOf(Title, Time, CalendarId, Description, Source, ReminderMinutes, References, TemplateId, ApplicationId)
     }
 }
 
@@ -112,7 +113,8 @@ data class NetworkCalendarTemplateEvent(
     val minutes: Int,
     val weekday: Int? = null,
     val calendarId: String = NetworkCalendar.Personal,
-    val taskId: String? = null,
+    /** What the events made from it are, as [NetworkCalendarEvent.source]. */
+    val source: String? = null,
     val reminderMinutes: Int? = null,
 ) {
     companion object { const val SyncType = "calendar_template_event" }
@@ -124,8 +126,8 @@ data class NetworkCalendarTemplateEvent(
         val StartMinute = SyncField("startMinute", Int.serializer())
         val Minutes = SyncField("minutes", Int.serializer())
         val CalendarId = SyncField("calendarId", String.serializer())
-        val TaskId = SyncField("taskId", String.serializer().nullable)
+        val Source = SyncField("source", String.serializer().nullable)
         val ReminderMinutes = SyncField("reminderMinutes", Int.serializer().nullable)
-        val All: List<SyncField<*>> = listOf(TemplateId, Title, Weekday, StartMinute, Minutes, CalendarId, TaskId, ReminderMinutes)
+        val All: List<SyncField<*>> = listOf(TemplateId, Title, Weekday, StartMinute, Minutes, CalendarId, Source, ReminderMinutes)
     }
 }

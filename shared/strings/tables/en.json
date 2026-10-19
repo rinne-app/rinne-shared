@@ -1098,6 +1098,31 @@
     "tasksScheduleUpcomingHolder": {"one": "%1$d upcoming", "other": "%1$d upcoming"},
     "tasksSchedulePastHolder": {"one": "%1$d past", "other": "%1$d past"},
 
-    "tasksPinned": "Pinned"
+    "tasksPinned": "Pinned",
+
+    "calendarLinkSource": "Link a task, note or practice",
+    "calendarThisEventIs": "This event is",
+    "calendarPractice": "Practice",
+    "calendarLesson": "Lesson",
+    "calendarPlainEventHint": "A plain event. Attach notes or sets to it if they help.",
+    "calendarChangeSource": "Change what this event is",
+    "calendarAttachSearchAll": "Search notes, tasks, sets, books",
+    "calendarSets": "Sets",
+    "calendarBooks": "Books",
+    "calendarCourses": "Courses",
+    "calendarRecent": "Recent",
+    "calendarAttachCountHolder": "Attach (%1$d)",
+    "calendarAttachLine": "Attach a note, task or set",
+    "calendarNewEventKindHolder": "New event · %1$s",
+    "calendarDayTemplate": "Day template",
+    "calendarWeekTemplate": "Week template",
+    "calendarGraph": "Graph",
+    "calendarNoLinksHint": "No links yet.\nType {{ in any note, task or event to link this one.",
+    "calendarEventsCount": "events",
+    "calendarPlanned": "planned",
+    "calendarAppliedCount": "applied",
+    "calendarSelectEvent": "Select an event, or press ⌘N.",
+    "calendarFromTemplate": "From template",
+    "calendarSettings": "Settings"
   }
 }

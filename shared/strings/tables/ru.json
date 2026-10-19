@@ -1148,6 +1148,31 @@
     "tasksScheduleUpcomingHolder": {"one": "%1$d предстоит", "few": "%1$d предстоят", "many": "%1$d предстоит", "other": "%1$d предстоят"},
     "tasksSchedulePastHolder": {"one": "%1$d прошло", "few": "%1$d прошли", "many": "%1$d прошло", "other": "%1$d прошли"},
 
-    "tasksPinned": "Закреплённые"
+    "tasksPinned": "Закреплённые",
+
+    "calendarLinkSource": "Связать с задачей, заметкой или практикой",
+    "calendarThisEventIs": "Это событие —",
+    "calendarPractice": "Практика",
+    "calendarLesson": "Урок",
+    "calendarPlainEventHint": "Обычное событие. Прикрепите заметки или наборы, если они помогут.",
+    "calendarChangeSource": "Изменить, чем является событие",
+    "calendarAttachSearchAll": "Поиск заметок, задач, наборов, книг",
+    "calendarSets": "Наборы",
+    "calendarBooks": "Книги",
+    "calendarCourses": "Курсы",
+    "calendarRecent": "Недавние",
+    "calendarAttachCountHolder": "Прикрепить (%1$d)",
+    "calendarAttachLine": "Прикрепить заметку, задачу или набор",
+    "calendarNewEventKindHolder": "Новое событие · %1$s",
+    "calendarDayTemplate": "Шаблон дня",
+    "calendarWeekTemplate": "Шаблон недели",
+    "calendarGraph": "Граф",
+    "calendarNoLinksHint": "Ссылок пока нет.\nНапишите {{ в любой заметке, задаче или событии, чтобы сослаться на это.",
+    "calendarEventsCount": "событий",
+    "calendarPlanned": "запланировано",
+    "calendarAppliedCount": "применён",
+    "calendarSelectEvent": "Выберите событие или нажмите ⌘N.",
+    "calendarFromTemplate": "Из шаблона",
+    "calendarSettings": "Настройки"
   }
 }
