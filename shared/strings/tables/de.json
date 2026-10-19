@@ -1086,6 +1086,18 @@
     "homeCalendarNowHolder": "Jetzt · %1$s",
     "homeCalendarNothingToday": "Heute ist nichts geplant",
     "tasksRemoveFromCalendarTitle": "Aus dem Kalender entfernen?",
-    "tasksRemoveFromCalendarMessage": "Der zugeordnete Termin wird entfernt. Diese Aktion kann rückgängig gemacht werden."
+    "tasksRemoveFromCalendarMessage": "Der zugeordnete Termin wird entfernt. Diese Aktion kann rückgängig gemacht werden.",
+
+    "navigationHideSidebar": "Seitenleiste ausblenden",
+    "navigationShowSidebar": "Seitenleiste einblenden",
+    "navigationOpenTabs": "Offene Tabs",
+    "shortcutsToggleSidebar": "Seitenleiste ein- oder ausblenden",
+    "tasksNoOpenTasks": "Keine offenen Aufgaben",
+    "tasksEditedHolder": "bearbeitet %1$s",
+    "tasksSubTasksDoneHolder": "%1$d/%2$d erledigt",
+    "tasksScheduleUpcomingHolder": {"one": "%1$d anstehend", "other": "%1$d anstehend"},
+    "tasksSchedulePastHolder": {"one": "%1$d vergangen", "other": "%1$d vergangen"},
+
+    "tasksPinned": "Angeheftet"
   }
 }

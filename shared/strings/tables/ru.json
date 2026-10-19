@@ -1136,6 +1136,18 @@
     "homeCalendarNowHolder": "Сейчас · %1$s",
     "homeCalendarNothingToday": "На сегодня ничего не запланировано",
     "tasksRemoveFromCalendarTitle": "Убрать из календаря?",
-    "tasksRemoveFromCalendarMessage": "Событие с этой задачей будет удалено. Действие можно отменить."
+    "tasksRemoveFromCalendarMessage": "Событие с этой задачей будет удалено. Действие можно отменить.",
+
+    "navigationHideSidebar": "Скрыть боковую панель",
+    "navigationShowSidebar": "Показать боковую панель",
+    "navigationOpenTabs": "Открытые вкладки",
+    "shortcutsToggleSidebar": "Показать или скрыть боковую панель",
+    "tasksNoOpenTasks": "Нет открытых задач",
+    "tasksEditedHolder": "изменено %1$s",
+    "tasksSubTasksDoneHolder": "%1$d/%2$d готово",
+    "tasksScheduleUpcomingHolder": {"one": "%1$d предстоит", "few": "%1$d предстоят", "many": "%1$d предстоит", "other": "%1$d предстоят"},
+    "tasksSchedulePastHolder": {"one": "%1$d прошло", "few": "%1$d прошли", "many": "%1$d прошло", "other": "%1$d прошли"},
+
+    "tasksPinned": "Закреплённые"
   }
 }

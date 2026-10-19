@@ -1086,6 +1086,18 @@
     "homeCalendarNowHolder": "Now · %1$s",
     "homeCalendarNothingToday": "Nothing planned today",
     "tasksRemoveFromCalendarTitle": "Remove from calendar?",
-    "tasksRemoveFromCalendarMessage": "The placing event will be removed. You can undo this action."
+    "tasksRemoveFromCalendarMessage": "The placing event will be removed. You can undo this action.",
+
+    "navigationHideSidebar": "Hide sidebar",
+    "navigationShowSidebar": "Show sidebar",
+    "navigationOpenTabs": "Open tabs",
+    "shortcutsToggleSidebar": "Show or hide the sidebar",
+    "tasksNoOpenTasks": "No open tasks",
+    "tasksEditedHolder": "edited %1$s",
+    "tasksSubTasksDoneHolder": "%1$d/%2$d done",
+    "tasksScheduleUpcomingHolder": {"one": "%1$d upcoming", "other": "%1$d upcoming"},
+    "tasksSchedulePastHolder": {"one": "%1$d past", "other": "%1$d past"},
+
+    "tasksPinned": "Pinned"
   }
 }
