@@ -675,6 +675,8 @@
     "tasksShowTitle": "Anzeigen",
     "tasksShowDone": "Erledigte Aufgaben",
     "tasksShowDoneHint": "Am Ende jeder Liste",
+    "tasksShowSidebarTasks": "Show tasks in sidebar",
+    "tasksShowSidebarTasksHint": "Turn off to show folders only",
     "tasksShowSubTasks": "Teilaufgaben unter Aufgaben",
     "tasksShowCalendar": "Fälligkeiten im Kalender",
     "tasksSearchPlaceholder": "Aufgaben suchen",
@@ -1122,6 +1124,7 @@
     "calendarPlanned": "geplant",
     "calendarAppliedCount": "angewendet",
     "calendarSelectEvent": "Wähle einen Termin oder drücke ⌘N.",
+
     "calendarFromTemplate": "Aus Vorlage",
     "calendarSettings": "Einstellungen"
   }

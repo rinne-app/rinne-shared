@@ -675,6 +675,8 @@
     "tasksShowTitle": "Show",
     "tasksShowDone": "Done tasks",
     "tasksShowDoneHint": "At the end of each list",
+    "tasksShowSidebarTasks": "Show tasks in sidebar",
+    "tasksShowSidebarTasksHint": "Turn off to show folders only",
     "tasksShowSubTasks": "Subtasks under tasks",
     "tasksShowCalendar": "Due dates in Calendar",
     "tasksSearchPlaceholder": "Search tasks",
@@ -1122,6 +1124,7 @@
     "calendarPlanned": "planned",
     "calendarAppliedCount": "applied",
     "calendarSelectEvent": "Select an event, or press ⌘N.",
+
     "calendarFromTemplate": "From template",
     "calendarSettings": "Settings"
   }

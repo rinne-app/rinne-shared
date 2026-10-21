@@ -687,6 +687,8 @@
     "tasksShowTitle": "Показывать",
     "tasksShowDone": "Готовые задачи",
     "tasksShowDoneHint": "В конце каждого списка",
+    "tasksShowSidebarTasks": "Show tasks in sidebar",
+    "tasksShowSidebarTasksHint": "Turn off to show folders only",
     "tasksShowSubTasks": "Подзадачи под задачами",
     "tasksShowCalendar": "Сроки в календаре",
     "tasksSearchPlaceholder": "Поиск задач",
@@ -1172,6 +1174,7 @@
     "calendarPlanned": "запланировано",
     "calendarAppliedCount": "применён",
     "calendarSelectEvent": "Выберите событие или нажмите ⌘N.",
+
     "calendarFromTemplate": "Из шаблона",
     "calendarSettings": "Настройки"
   }
