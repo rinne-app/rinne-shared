@@ -9,7 +9,8 @@ import kotlinx.serialization.builtins.serializer
 /**
  * A tag as synced. Writable fields: `name` (one segment of its path: `grammar` in
  * `#language/deutsch/grammar`), `parentId` (the tag it is nested in; `null` = top level), `pinned`
- * (shown in the apps' sidebars). The apps delete a tag together with its nested tags and their items;
+ * (shown in the apps' sidebars), `scopeId` (the scope it belongs to and shows in; `null` = none: it shows
+ * in Global and the personal scope, which show every tag). The apps delete a tag together with its nested tags and their items;
  * the server keeps no references between tags and items.
  */
 @Serializable
@@ -20,6 +21,7 @@ data class NetworkTag(
     val updatedAt: RinneTimestamp,
     val parentId: String? = null,
     val pinned: Boolean = false,
+    val scopeId: String? = null,
 ) {
     companion object {
         const val SyncType = "tag"
@@ -33,8 +35,9 @@ data class NetworkTag(
         val Name = SyncField("name", String.serializer())
         val ParentId = SyncField("parentId", String.serializer().nullable)
         val Pinned = SyncField("pinned", Boolean.serializer())
+        val ScopeId = SyncField("scopeId", String.serializer().nullable)
 
-        val All: List<SyncField<*>> = listOf(Name, ParentId, Pinned)
+        val All: List<SyncField<*>> = listOf(Name, ParentId, Pinned, ScopeId)
     }
 }
 
