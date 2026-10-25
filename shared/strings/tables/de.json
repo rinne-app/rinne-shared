@@ -813,6 +813,19 @@
       "one": "%1$d offene Aufgabe passt",
       "other": "%1$d offene Aufgaben passen"
     },
+    "tagsTagChip": "Tag",
+    "tagsTagged": "Getaggt",
+    "tagsShowHolder": "%1$d zeigen",
+    "tagsShowItemsHolder": {
+      "one": "%1$d Element zeigen",
+      "other": "%1$d Elemente zeigen"
+    },
+    "tagsShowTasksHolder": {
+      "one": "%1$d Aufgabe zeigen",
+      "other": "%1$d Aufgaben zeigen"
+    },
+    "tagsName": "Name",
+    "tagsMergeIntoAnother": "Mit einem anderen Tag zusammenführen",
     "linksViaCard": "als Karte eingebettet",
     "linksViaAttachment": "angehängt",
     "linksBothWays": "In beide Richtungen",

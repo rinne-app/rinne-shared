@@ -841,6 +841,23 @@
       "many": "%1$d открытых задач",
       "other": "%1$d открытой задачи"
     },
+    "tagsTagChip": "Тег",
+    "tagsTagged": "С тегами",
+    "tagsShowHolder": "Показать %1$d",
+    "tagsShowItemsHolder": {
+      "one": "Показать %1$d элемент",
+      "few": "Показать %1$d элемента",
+      "many": "Показать %1$d элементов",
+      "other": "Показать %1$d элемента"
+    },
+    "tagsShowTasksHolder": {
+      "one": "Показать %1$d задачу",
+      "few": "Показать %1$d задачи",
+      "many": "Показать %1$d задач",
+      "other": "Показать %1$d задачи"
+    },
+    "tagsName": "Название",
+    "tagsMergeIntoAnother": "Объединить с другим тегом",
     "linksViaCard": "встроена карточкой",
     "linksViaAttachment": "прикреплена",
     "linksBothWays": "В обе стороны",

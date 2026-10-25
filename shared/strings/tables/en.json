@@ -813,6 +813,19 @@
       "one": "%1$d open task matches",
       "other": "%1$d open tasks match"
     },
+    "tagsTagChip": "Tag",
+    "tagsTagged": "Tagged",
+    "tagsShowHolder": "Show %1$d",
+    "tagsShowItemsHolder": {
+      "one": "Show %1$d item",
+      "other": "Show %1$d items"
+    },
+    "tagsShowTasksHolder": {
+      "one": "Show %1$d task",
+      "other": "Show %1$d tasks"
+    },
+    "tagsName": "Name",
+    "tagsMergeIntoAnother": "Merge into another tag",
     "linksViaCard": "embedded as a card",
     "linksViaAttachment": "attached",
     "linksBothWays": "Both ways",
