@@ -25,6 +25,11 @@ value class RinneTimestamp(val epochMillis: Long) : Comparable<RinneTimestamp> {
     operator fun minus(duration: RinneDuration): RinneTimestamp =
         RinneTimestamp(epochMillis - duration.inWholeMilliseconds)
 
+    operator fun minus(other: RinneTimestamp): RinneDuration = RinneDuration.of(
+        epochMillis / 1_000 - other.epochMillis / 1_000,
+        (epochMillis % 1_000 - other.epochMillis % 1_000) * 1_000_000,
+    )
+
     /** ISO-8601 representation in UTC, e.g. `2026-10-08T12:30:00.123Z`. */
     fun toIsoString(): String = RinneTimestampKotlinx.format(epochMillis)
 

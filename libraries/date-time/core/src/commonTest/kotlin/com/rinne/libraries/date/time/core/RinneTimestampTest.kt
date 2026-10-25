@@ -11,6 +11,15 @@ import kotlin.test.assertTrue
 class RinneTimestampTest {
 
     @Test
+    fun `timestamp subtraction retains millisecond precision and sign without overflowing`() {
+        assertEquals(1_501.milliseconds, RinneTimestamp(2_001) - RinneTimestamp(500))
+        assertEquals((-1_501).milliseconds, RinneTimestamp(500) - RinneTimestamp(2_001))
+        assertEquals(RinneDuration.ZERO, RinneTimestamp(500) - RinneTimestamp(500))
+        assertEquals(RinneDuration.of(18_446_744_073_709_551, 615_000_000), RinneTimestamp(Long.MAX_VALUE) - RinneTimestamp(Long.MIN_VALUE))
+        assertEquals(RinneDuration.of(-18_446_744_073_709_551, -615_000_000), RinneTimestamp(Long.MIN_VALUE) - RinneTimestamp(Long.MAX_VALUE))
+    }
+
+    @Test
     fun `formats as ISO-8601 in UTC`() {
         assertEquals("2026-10-08T12:30:00.123Z", RinneTimestamp(1_791_462_600_123).toIsoString())
     }
