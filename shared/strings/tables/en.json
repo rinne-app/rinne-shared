@@ -1506,6 +1506,44 @@
     "searchTaskCountHolder": {
       "one": "%1$d task",
       "other": "%1$d tasks"
-    }
+    },
+    "detailsTitle": "Details",
+    "detailsCreated": "Created",
+    "detailsLastEdited": "Last edited",
+    "detailsLastUpdated": "Last updated",
+    "detailsLastOpened": "Last opened",
+    "detailsFolder": "Folder",
+    "detailsTags": "Tags",
+    "detailsLinks": "Links",
+    "detailsComments": "Comments",
+    "detailsWords": "Words",
+    "detailsReadingTime": "Reading time",
+    "detailsSections": "Sections",
+    "detailsInProgressSince": "In progress since",
+    "detailsSubTasks": "Sub-tasks",
+    "detailsDependencies": "Dependencies",
+    "detailsScheduled": "Scheduled",
+    "detailsCreatedFrom": "Created from",
+    "detailsStatusChanges": "Status changes",
+    "detailsCalendar": "Calendar",
+    "detailsRepeat": "Repeat",
+    "detailsReminders": "Reminders",
+    "detailsSource": "Linked to",
+    "detailsAttachments": "Attachments",
+    "detailsVersionHistory": "Version history",
+    "detailsNone": "None",
+    "detailsYesterdayHolder": "Yesterday, %1$s",
+    "detailsDateTimeHolder": "%1$s, %2$s",
+    "detailsCountHolder": "%1$d",
+    "detailsNameHolder": "%1$s",
+    "detailsPathHolder": "%1$s / %2$s",
+    "detailsLinksHolder": "%1$d in · %2$d out",
+    "detailsWordsHolder": {
+      "one": "%1$d · %2$d character",
+      "other": "%1$d · %2$d characters"
+    },
+    "detailsReadingTimeHolder": "≈ %1$d min",
+    "detailsSectionsHolder": "%1$d · %2$d linked",
+    "detailsSubTasksHolder": "%1$d of %2$d done"
   }
 }
