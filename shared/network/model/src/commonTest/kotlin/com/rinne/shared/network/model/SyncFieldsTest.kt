@@ -14,6 +14,7 @@ import com.rinne.shared.network.model.sync.SyncField
 import com.rinne.shared.network.model.tags.NetworkTag
 import com.rinne.shared.network.model.tags.NetworkTagItem
 import com.rinne.shared.network.model.tasks.NetworkTask
+import com.rinne.shared.network.model.tasks.NetworkTaskFilter
 import com.rinne.shared.network.model.tasks.NetworkTaskFolder
 import com.rinne.shared.network.model.tasks.NetworkTaskStatus
 import com.rinne.shared.network.model.sync.SyncFieldValue
@@ -46,6 +47,7 @@ class SyncFieldsTest {
         assertFieldsOf(NetworkTask.serializer().descriptor, NetworkTask.Fields.All)
         assertFieldsOf(NetworkTaskFolder.serializer().descriptor, NetworkTaskFolder.Fields.All)
         assertFieldsOf(NetworkTaskStatus.serializer().descriptor, NetworkTaskStatus.Fields.All)
+        assertFieldsOf(NetworkTaskFilter.serializer().descriptor, NetworkTaskFilter.Fields.All)
         assertFieldsOf(NetworkTag.serializer().descriptor, NetworkTag.Fields.All)
         assertFieldsOf(NetworkTagItem.serializer().descriptor, NetworkTagItem.Fields.All)
     }
