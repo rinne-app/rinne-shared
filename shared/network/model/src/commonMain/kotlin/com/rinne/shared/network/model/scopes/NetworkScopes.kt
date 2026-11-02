@@ -57,6 +57,9 @@ data class NetworkScopeItem(
 
         /** A task folder. */
         const val AppTasks = "tasks"
+
+        /** A folder of books. */
+        const val AppBooks = "books"
     }
 }
 

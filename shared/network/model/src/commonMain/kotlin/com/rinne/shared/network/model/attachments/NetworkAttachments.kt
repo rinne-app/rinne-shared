@@ -7,7 +7,7 @@ import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.builtins.serializer
 
 /**
- * A file attached to an entity (a note's voice note), as synced: its metadata only — the bytes go to
+ * A file attached to an entity (a note's voice note, a book's file or cover), as synced: its metadata only — the bytes go to
  * object storage through the URLs of [NetworkAttachmentTransfer] (offline sync design §8). Writable
  * fields: the owner (`ownerType`, `ownerId`), `fileName`, `mimeType`, `size` and `sha256` (fixed once
  * the file is uploaded), and the audio details `durationMillis`, `waveform` (the levels as hex bytes,
@@ -36,6 +36,12 @@ data class NetworkAttachment(
 
         /** [ownerType] of a note's attachment. */
         const val OwnerNote = "note"
+
+        /** [ownerType] of a book's file (one per book, at most `NetworkBooks.MaxFileSize`). */
+        const val OwnerBook = "book"
+
+        /** [ownerType] of a book's cover image (JPEG or PNG, at most `NetworkBooks.MaxCoverSize`). */
+        const val OwnerBookCover = "book_cover"
 
         /** The largest file the server accepts (offline sync design §8). */
         const val MaxSize = 1L shl 30

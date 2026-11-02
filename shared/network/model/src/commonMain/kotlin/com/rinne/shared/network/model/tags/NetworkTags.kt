@@ -43,7 +43,7 @@ data class NetworkTag(
 
 /**
  * One tag on one thing: the tag [tagId] on the entity [entityId] of the kind [kind] (an entity
- * reference's kind: `note`, `task`, `event` …). Writable fields: all three (merging tags re-points
+ * reference's kind: `note`, `task`, `event`, `book` …). Writable fields: all three (merging tags re-points
  * `tagId`).
  */
 @Serializable

@@ -58,7 +58,7 @@ data class NetworkCalendarEvent(
     val time: NetworkEventTime,
     val calendarId: String = NetworkCalendar.Personal,
     val description: String = "",
-    /** What the event is (`rinne://task/<id>`, `rinne://note/<id>`); null for a plain event. */
+    /** What the event is (`rinne://task/<id>`, `rinne://note/<id>`, `rinne://book/<id>` — a reading slot); null for a plain event. */
     val source: String? = null,
     val reminderMinutes: Int? = null,
     val references: List<String> = emptyList(),

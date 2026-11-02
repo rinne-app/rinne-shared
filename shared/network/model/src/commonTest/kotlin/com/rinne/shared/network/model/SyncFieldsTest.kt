@@ -5,6 +5,9 @@ import com.rinne.shared.network.model.calendar.NetworkCalendarEvent
 import com.rinne.shared.network.model.calendar.NetworkCalendarTemplate
 import com.rinne.shared.network.model.calendar.NetworkCalendarTemplateEvent
 import com.rinne.shared.network.model.attachments.NetworkAttachment
+import com.rinne.shared.network.model.books.NetworkBook
+import com.rinne.shared.network.model.books.NetworkBookAnnotation
+import com.rinne.shared.network.model.books.NetworkBookFolder
 import com.rinne.shared.network.model.notes.NetworkNote
 import com.rinne.shared.network.model.notes.NetworkNoteFolder
 import com.rinne.shared.network.model.scopes.NetworkScope
@@ -50,6 +53,9 @@ class SyncFieldsTest {
         assertFieldsOf(NetworkTaskFilter.serializer().descriptor, NetworkTaskFilter.Fields.All)
         assertFieldsOf(NetworkTag.serializer().descriptor, NetworkTag.Fields.All)
         assertFieldsOf(NetworkTagItem.serializer().descriptor, NetworkTagItem.Fields.All)
+        assertFieldsOf(NetworkBook.serializer().descriptor, NetworkBook.Fields.All)
+        assertFieldsOf(NetworkBookFolder.serializer().descriptor, NetworkBookFolder.Fields.All)
+        assertFieldsOf(NetworkBookAnnotation.serializer().descriptor, NetworkBookAnnotation.Fields.All)
     }
 
     @Test
