@@ -2145,6 +2145,10 @@
     "bookSizeKilobytesHolder": "%1$d КБ",
     "bookSizeMegabytesHolder": "%1$d,%2$d МБ",
     "bookSizeWholeMegabytesHolder": "%1$d МБ",
-    "bookNamedHolder": "%1$s"
+    "bookNamedHolder": "%1$s",
+    "linksKindBook": "Книга",
+    "linksBooks": "Книги",
+    "calendarKindBook": "Книга",
+    "searchHighlight": "Выделение"
   }
 }

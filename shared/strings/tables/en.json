@@ -2031,6 +2031,10 @@
     "bookSizeKilobytesHolder": "%1$d KB",
     "bookSizeMegabytesHolder": "%1$d.%2$d MB",
     "bookSizeWholeMegabytesHolder": "%1$d MB",
-    "bookNamedHolder": "%1$s"
+    "bookNamedHolder": "%1$s",
+    "linksKindBook": "Book",
+    "linksBooks": "Books",
+    "calendarKindBook": "Book",
+    "searchHighlight": "Highlight"
   }
 }
