@@ -1648,6 +1648,26 @@
     "tasksFilterHitsHolder": {
       "one": "%1$d task",
       "other": "%1$d tasks"
-    }
+    },
+    "booksBookNotFoundTitle": "Book not found",
+    "booksBookNotFoundMessage": "It may have been deleted on another device.",
+    "booksFolderNotFoundTitle": "Folder not found",
+    "booksFolderNotFoundMessage": "It may have been deleted on another device.",
+    "booksAnnotationNotFoundTitle": "Highlight not found",
+    "booksAnnotationNotFoundMessage": "It may have been deleted on another device.",
+    "booksFolderCycleTitle": "Can't move the folder there",
+    "booksFolderCycleMessage": "A folder can't go into itself or one of its subfolders.",
+    "booksUnsupportedFormatTitle": "This format can't be read",
+    "booksUnsupportedFormatMessage": "Rinne reads EPUB, PDF, FB2, MOBI, AZW3, CBZ, TXT, HTML and Markdown.",
+    "booksFileTooLargeTitle": "The file is too large",
+    "booksFileTooLargeMessage": "Books can be up to %1$d MB.",
+    "booksProtectedFileTitle": "The book is copy-protected",
+    "booksProtectedFileMessage": "Files with DRM can't be opened. Remove the protection where you bought it, then add it again.",
+    "booksCorruptFileTitle": "The file is damaged",
+    "booksCorruptFileMessage": "Part of it is missing or broken. Try another copy.",
+    "booksUnreadableFileTitle": "The file can't be read",
+    "booksUnreadableFileMessage": "Check that it's still there and try again.",
+    "booksFileUnavailableTitle": "The book isn't on this device",
+    "booksFileUnavailableMessage": "Connect to the internet to download it, or open it on the device you added it from."
   }
 }

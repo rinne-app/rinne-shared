@@ -1648,6 +1648,26 @@
     "tasksFilterHitsHolder": {
       "one": "%1$d Aufgabe",
       "other": "%1$d Aufgaben"
-    }
+    },
+    "booksBookNotFoundTitle": "Buch nicht gefunden",
+    "booksBookNotFoundMessage": "Es wurde vielleicht auf einem anderen Gerät gelöscht.",
+    "booksFolderNotFoundTitle": "Ordner nicht gefunden",
+    "booksFolderNotFoundMessage": "Er wurde vielleicht auf einem anderen Gerät gelöscht.",
+    "booksAnnotationNotFoundTitle": "Markierung nicht gefunden",
+    "booksAnnotationNotFoundMessage": "Sie wurde vielleicht auf einem anderen Gerät gelöscht.",
+    "booksFolderCycleTitle": "Der Ordner kann nicht dorthin",
+    "booksFolderCycleMessage": "Ein Ordner kann nicht in sich selbst oder einen seiner Unterordner.",
+    "booksUnsupportedFormatTitle": "Dieses Format kann nicht gelesen werden",
+    "booksUnsupportedFormatMessage": "Rinne liest EPUB, PDF, FB2, MOBI, AZW3, CBZ, TXT, HTML und Markdown.",
+    "booksFileTooLargeTitle": "Die Datei ist zu groß",
+    "booksFileTooLargeMessage": "Bücher dürfen bis zu %1$d MB groß sein.",
+    "booksProtectedFileTitle": "Das Buch ist kopiergeschützt",
+    "booksProtectedFileMessage": "Dateien mit DRM lassen sich nicht öffnen. Entferne den Schutz dort, wo du es gekauft hast, und füge es erneut hinzu.",
+    "booksCorruptFileTitle": "Die Datei ist beschädigt",
+    "booksCorruptFileMessage": "Ein Teil fehlt oder ist defekt. Versuche eine andere Kopie.",
+    "booksUnreadableFileTitle": "Die Datei kann nicht gelesen werden",
+    "booksUnreadableFileMessage": "Prüfe, ob sie noch da ist, und versuche es erneut.",
+    "booksFileUnavailableTitle": "Das Buch ist nicht auf diesem Gerät",
+    "booksFileUnavailableMessage": "Verbinde dich mit dem Internet, um es zu laden, oder öffne es auf dem Gerät, auf dem du es hinzugefügt hast."
   }
 }

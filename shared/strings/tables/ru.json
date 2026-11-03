@@ -1744,6 +1744,26 @@
       "few": "%1$d задачи",
       "many": "%1$d задач",
       "other": "%1$d задачи"
-    }
+    },
+    "booksBookNotFoundTitle": "Книга не найдена",
+    "booksBookNotFoundMessage": "Возможно, её удалили на другом устройстве.",
+    "booksFolderNotFoundTitle": "Папка не найдена",
+    "booksFolderNotFoundMessage": "Возможно, её удалили на другом устройстве.",
+    "booksAnnotationNotFoundTitle": "Выделение не найдено",
+    "booksAnnotationNotFoundMessage": "Возможно, его удалили на другом устройстве.",
+    "booksFolderCycleTitle": "Папку нельзя переместить сюда",
+    "booksFolderCycleMessage": "Папка не может оказаться внутри себя или своей подпапки.",
+    "booksUnsupportedFormatTitle": "Этот формат не читается",
+    "booksUnsupportedFormatMessage": "Rinne читает EPUB, PDF, FB2, MOBI, AZW3, CBZ, TXT, HTML и Markdown.",
+    "booksFileTooLargeTitle": "Файл слишком большой",
+    "booksFileTooLargeMessage": "Книга может весить до %1$d МБ.",
+    "booksProtectedFileTitle": "Книга защищена от копирования",
+    "booksProtectedFileMessage": "Файлы с DRM не открываются. Снимите защиту там, где покупали книгу, и добавьте её снова.",
+    "booksCorruptFileTitle": "Файл повреждён",
+    "booksCorruptFileMessage": "Часть файла отсутствует или испорчена. Попробуйте другую копию.",
+    "booksUnreadableFileTitle": "Файл не читается",
+    "booksUnreadableFileMessage": "Проверьте, что он на месте, и попробуйте снова.",
+    "booksFileUnavailableTitle": "Книги нет на этом устройстве",
+    "booksFileUnavailableMessage": "Подключитесь к интернету, чтобы скачать её, или откройте на устройстве, где вы её добавили."
   }
 }
