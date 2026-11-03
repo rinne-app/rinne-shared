@@ -2016,6 +2016,21 @@
     "readerHighlightsCountHolder": "%1$s highlights",
     "readerSearchHitsHolder": "%1$s matches",
     "readerReturnTo": "Back to",
-    "readerSizePointsHolder": "%1$s pt"
+    "readerSizePointsHolder": "%1$s pt",
+    "booksScanFilesHolder": {
+      "one": "%1$d file",
+      "other": "%1$d files"
+    },
+    "booksScanNewHolder": "%1$d new",
+    "booksScanInLibraryHolder": "%1$d already in library",
+    "booksImportCountHolder": {
+      "one": "Import %1$d book",
+      "other": "Import %1$d books"
+    },
+    "bookProgressHolder": "%1$d%%",
+    "bookSizeKilobytesHolder": "%1$d KB",
+    "bookSizeMegabytesHolder": "%1$d.%2$d MB",
+    "bookSizeWholeMegabytesHolder": "%1$d MB",
+    "bookNamedHolder": "%1$s"
   }
 }

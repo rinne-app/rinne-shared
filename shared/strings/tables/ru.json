@@ -2126,6 +2126,25 @@
     "readerHighlightsCountHolder": "Выделений: %1$s",
     "readerSearchHitsHolder": "Совпадений: %1$s",
     "readerReturnTo": "Назад к",
-    "readerSizePointsHolder": "%1$s pt"
+    "readerSizePointsHolder": "%1$s pt",
+    "booksScanFilesHolder": {
+      "one": "%1$d файл",
+      "few": "%1$d файла",
+      "many": "%1$d файлов",
+      "other": "%1$d файла"
+    },
+    "booksScanNewHolder": "новых: %1$d",
+    "booksScanInLibraryHolder": "уже в библиотеке: %1$d",
+    "booksImportCountHolder": {
+      "one": "Импортировать %1$d книгу",
+      "few": "Импортировать %1$d книги",
+      "many": "Импортировать %1$d книг",
+      "other": "Импортировать %1$d книги"
+    },
+    "bookProgressHolder": "%1$d%%",
+    "bookSizeKilobytesHolder": "%1$d КБ",
+    "bookSizeMegabytesHolder": "%1$d,%2$d МБ",
+    "bookSizeWholeMegabytesHolder": "%1$d МБ",
+    "bookNamedHolder": "%1$s"
   }
 }
