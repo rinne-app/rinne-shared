@@ -2127,6 +2127,9 @@
     "readerSearchHitsHolder": "Совпадений: %1$s",
     "readerReturnTo": "Назад к",
     "readerSizePointsHolder": "%1$s pt",
+    "readerPrintPageHolder": "с. %1$s",
+    "readerFootnoteTitle": "Сноска",
+    "readerFootnoteGoTo": "К сноске",
     "booksScanFilesHolder": {
       "one": "%1$d файл",
       "few": "%1$d файла",

@@ -2017,6 +2017,9 @@
     "readerSearchHitsHolder": "%1$s matches",
     "readerReturnTo": "Back to",
     "readerSizePointsHolder": "%1$s pt",
+    "readerPrintPageHolder": "p. %1$s",
+    "readerFootnoteTitle": "Footnote",
+    "readerFootnoteGoTo": "Go to note",
     "booksScanFilesHolder": {
       "one": "%1$d file",
       "other": "%1$d files"

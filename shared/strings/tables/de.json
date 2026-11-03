@@ -2017,6 +2017,9 @@
     "readerSearchHitsHolder": "%1$s Treffer",
     "readerReturnTo": "Zurück zu",
     "readerSizePointsHolder": "%1$s pt",
+    "readerPrintPageHolder": "S. %1$s",
+    "readerFootnoteTitle": "Fußnote",
+    "readerFootnoteGoTo": "Zur Anmerkung",
     "booksScanFilesHolder": {
       "one": "%1$d Datei",
       "other": "%1$d Dateien"
