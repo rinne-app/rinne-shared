@@ -38,7 +38,7 @@ class BooksWireTest {
         assertEquals(SyncFieldValue.Present(null), fields.readSyncField(NetworkBook.Fields.PositionLabel))
     }
 
-    @Test fun `create-only properties are sent with the create, ids and timestamps never`() {
+    @Test fun `create-only properties are sent with the create - ids and timestamps never`() {
         val bookFields = NetworkBook.Fields.All.map { it.name }
         listOf("id", "createdAt", "updatedAt").forEach { assertFalse(it in bookFields, it) }
         listOf("format", "fileSha256", "fileSize").forEach { assertTrue(it in bookFields, it) }
@@ -59,7 +59,7 @@ class BooksWireTest {
         assertEquals("book_cover", NetworkAttachment.OwnerBookCover)
     }
 
-    @Test fun `book references name a book, a highlight and the highlights list`() {
+    @Test fun `book references name a book - a highlight and the highlights list`() {
         assertEquals("rinne://book/b1", NetworkBooks.reference("b1"))
         assertEquals("rinne://book/b1#a1", NetworkBooks.annotationReference("b1", "a1"))
         assertEquals("rinne://book/b1#highlights", NetworkBooks.highlightsReference("b1"))
