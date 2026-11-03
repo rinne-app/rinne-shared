@@ -38,11 +38,13 @@ class BooksWireTest {
         assertEquals(SyncFieldValue.Present(null), fields.readSyncField(NetworkBook.Fields.PositionLabel))
     }
 
-    @Test fun `create-only properties are not writable fields`() {
+    @Test fun `create-only properties are sent with the create, ids and timestamps never`() {
         val bookFields = NetworkBook.Fields.All.map { it.name }
-        listOf("id", "createdAt", "updatedAt", "format", "fileSha256", "fileSize").forEach { assertFalse(it in bookFields, it) }
+        listOf("id", "createdAt", "updatedAt").forEach { assertFalse(it in bookFields, it) }
+        listOf("format", "fileSha256", "fileSize").forEach { assertTrue(it in bookFields, it) }
         val annotationFields = NetworkBookAnnotation.Fields.All.map { it.name }
-        listOf("bookId", "kind").forEach { assertFalse(it in annotationFields, it) }
+        listOf("id", "createdAt", "updatedAt").forEach { assertFalse(it in annotationFields, it) }
+        listOf("bookId", "kind").forEach { assertTrue(it in annotationFields, it) }
     }
 
     @Test fun `the fixed sets name every value the wire allows`() {

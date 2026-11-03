@@ -41,8 +41,9 @@ object NetworkBooks {
 }
 
 /**
- * A book in the library, as synced. Writable fields: everything but `id`, `createdAt`, `format`,
- * `fileSha256` and `fileSize` (fixed by the file). The file itself is an attachment of owner type
+ * A book in the library, as synced. Writable fields: everything but `id` and `createdAt`; `format`,
+ * `fileSha256` and `fileSize` describe the file and are create-only (sent with the create, rejected
+ * when an update changes them). The file itself is an attachment of owner type
  * `book`, its cover one of `book_cover`. `position` is a locator of the reading engine (an EPUB CFI or
  * `page:<n>`; never a page number of a layout), `progress` the share of the book read (0…1),
  * `positionLabel` the chapter there, `positionAt` when the position was written (last write wins).
@@ -81,8 +82,11 @@ data class NetworkBook(
         const val SyncType = "book"
     }
 
-    /** The writable fields: the keys of push `fields`. */
+    /** The writable fields: the keys of push `fields` ([Format], [FileSha256] and [FileSize] create-only). */
     object Fields {
+        val Format = SyncField("format", String.serializer())
+        val FileSha256 = SyncField("fileSha256", String.serializer())
+        val FileSize = SyncField("fileSize", Long.serializer())
         val Title = SyncField("title", String.serializer())
         val FileName = SyncField("fileName", String.serializer())
         val Authors = SyncField("authors", ListSerializer(String.serializer()))
@@ -105,7 +109,7 @@ data class NetworkBook(
         val PositionAt = SyncField("positionAt", RinneTimestamp.serializer().nullable)
 
         val All: List<SyncField<*>> = listOf(
-            Title, FileName, Authors, Language, Pages, Chapters, Description, Publisher, Published, FolderId, Status,
+            Format, FileSha256, FileSize, Title, FileName, Authors, Language, Pages, Chapters, Description, Publisher, Published, FolderId, Status,
             StartedOn, FinishedOn, Pinned, OnHome, NoteId, Position, Progress, PositionLabel, PositionAt,
         )
     }
@@ -194,8 +198,10 @@ data class NetworkBookAnnotation(
         const val SyncType = "book_annotation"
     }
 
-    /** The writable fields: the keys of push `fields`. */
+    /** The writable fields: the keys of push `fields` ([BookId] and [Kind] create-only). */
     object Fields {
+        val BookId = SyncField("bookId", String.serializer())
+        val Kind = SyncField("kind", String.serializer())
         val Start = SyncField("start", String.serializer())
         val End = SyncField("end", String.serializer().nullable)
         val Text = SyncField("text", String.serializer())
@@ -205,7 +211,7 @@ data class NetworkBookAnnotation(
         val Chapter = SyncField("chapter", String.serializer().nullable)
         val Progress = SyncField("progress", Double.serializer())
 
-        val All: List<SyncField<*>> = listOf(Start, End, Text, Note, Color, Style, Chapter, Progress)
+        val All: List<SyncField<*>> = listOf(BookId, Kind, Start, End, Text, Note, Color, Style, Chapter, Progress)
     }
 
     object Kinds {
