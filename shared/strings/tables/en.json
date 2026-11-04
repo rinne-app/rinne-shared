@@ -1868,6 +1868,7 @@
     "readerTextAndTheme": "Text and theme",
     "readerBookmarkPage": "Bookmark this page",
     "readerFocusFooterHolder": "%1$s / %2$s · %3$s min left in chapter",
+    "readerFocusPagesHolder": "%1$s / %2$s",
     "readerSelTranslate": "Translate",
     "readerSelHighlight": "Highlight",
     "readerSelNote": "Note",

@@ -1868,6 +1868,7 @@
     "readerTextAndTheme": "Text und Design",
     "readerBookmarkPage": "Lesezeichen für diese Seite",
     "readerFocusFooterHolder": "%1$s / %2$s · noch %3$s Min. im Kapitel",
+    "readerFocusPagesHolder": "%1$s / %2$s",
     "readerSelTranslate": "Übersetzen",
     "readerSelHighlight": "Markieren",
     "readerSelNote": "Notiz",

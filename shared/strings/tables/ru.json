@@ -1964,6 +1964,7 @@
     "readerTextAndTheme": "Текст и тема",
     "readerBookmarkPage": "Добавить страницу в закладки",
     "readerFocusFooterHolder": "%1$s / %2$s · до конца главы %3$s мин",
+    "readerFocusPagesHolder": "%1$s / %2$s",
     "readerSelTranslate": "Перевести",
     "readerSelHighlight": "Выделить",
     "readerSelNote": "Заметка",
