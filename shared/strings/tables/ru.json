@@ -1448,6 +1448,7 @@
     "readerFontSerif": "С засечками",
     "readerFontSans": "Без засечек",
     "readerFontMono": "Моноширинный",
+    "readerFontDisplay": "Playfair Display",
     "readerColumns": "Columns",
     "readerColumnsAuto": "Automatic",
     "readerColumnsSingle": "One column",
