@@ -1860,6 +1860,12 @@
     "booksAddSelectAll": "Выбрать все",
     "booksAddDeselectAll": "Снять выбор",
     "booksAddInLibrary": "в библиотеке",
+    "booksAddWaitingHolder": {
+      "one": "ещё %1$d в очереди",
+      "few": "ещё %1$d в очереди",
+      "many": "ещё %1$d в очереди",
+      "other": "ещё %1$d в очереди"
+    },
     "booksAddLinkPlaceholder": "Вставьте ссылку",
     "booksAddLinkTitle": "Добавить книгу",
     "booksAddDownloadAndReview": "Загрузить и проверить",

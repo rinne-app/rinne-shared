@@ -1764,6 +1764,10 @@
     "booksAddSelectAll": "Select all",
     "booksAddDeselectAll": "Deselect all",
     "booksAddInLibrary": "in library",
+    "booksAddWaitingHolder": {
+      "one": "%1$d waiting",
+      "other": "%1$d waiting"
+    },
     "booksAddLinkPlaceholder": "Paste a link",
     "booksAddLinkTitle": "Add book",
     "booksAddDownloadAndReview": "Download and review",

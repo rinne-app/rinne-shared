@@ -1764,6 +1764,10 @@
     "booksAddSelectAll": "Alle auswählen",
     "booksAddDeselectAll": "Auswahl aufheben",
     "booksAddInLibrary": "in der Bibliothek",
+    "booksAddWaitingHolder": {
+      "one": "%1$d wartet",
+      "other": "%1$d warten"
+    },
     "booksAddLinkPlaceholder": "Link einfügen",
     "booksAddLinkTitle": "Buch hinzufügen",
     "booksAddDownloadAndReview": "Laden und prüfen",
