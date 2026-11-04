@@ -909,6 +909,7 @@
     "linksNewTask": "New task",
     "linksViaCard": "embedded as a card",
     "linksViaAttachment": "attached",
+    "linksViaQuote": "quoted",
     "linksBothWays": "Both ways",
     "linksMentionedHolder": "Mentioned without a link · %1$d",
     "linksLink": "Link",

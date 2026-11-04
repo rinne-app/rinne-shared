@@ -947,6 +947,7 @@
     "linksNewTask": "Новая задача",
     "linksViaCard": "встроена карточкой",
     "linksViaAttachment": "прикреплена",
+    "linksViaQuote": "процитирована",
     "linksBothWays": "В обе стороны",
     "linksMentionedHolder": "Упоминается без ссылки · %1$d",
     "linksLink": "Связать",

@@ -909,6 +909,7 @@
     "linksNewTask": "Neue Aufgabe",
     "linksViaCard": "als Karte eingebettet",
     "linksViaAttachment": "angehängt",
+    "linksViaQuote": "zitiert",
     "linksBothWays": "In beide Richtungen",
     "linksMentionedHolder": "Ohne Link erwähnt · %1$d",
     "linksLink": "Verlinken",
