@@ -160,18 +160,18 @@ data class NetworkMemorizerSettings(
 )
 
 /**
- * The account's Memorizer defaults, as synced: one per space, whose id is the space's id (sync ids
+ * The account's Memorizer settings (the defaults every set follows), as synced: one per space, whose id is the space's id (sync ids
  * must be UUIDv7, which space ids are). Writable field: `settings`.
  */
 @Serializable
-data class NetworkMemorizerDefaults(
+data class NetworkMemorizerAccountSettings(
     val id: String,
     val createdAt: RinneTimestamp,
     val updatedAt: RinneTimestamp,
     val settings: NetworkMemorizerSettings = NetworkMemorizerSettings(),
 ) {
     companion object {
-        const val SyncType = "memorizer_defaults"
+        const val SyncType = "memorizer_account_settings"
     }
 
     /** The writable fields: the keys of push `fields`. */
