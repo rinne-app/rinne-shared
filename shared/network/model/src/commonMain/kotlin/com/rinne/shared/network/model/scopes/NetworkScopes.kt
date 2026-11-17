@@ -60,6 +60,9 @@ data class NetworkScopeItem(
 
         /** A folder of books. */
         const val AppBooks = "books"
+
+        /** A folder of Memorizer sets. */
+        const val AppMemorizer = "memorizer"
     }
 }
 
