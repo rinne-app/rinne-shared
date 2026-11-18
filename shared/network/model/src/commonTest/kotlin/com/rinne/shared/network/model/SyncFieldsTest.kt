@@ -8,6 +8,8 @@ import com.rinne.shared.network.model.attachments.NetworkAttachment
 import com.rinne.shared.network.model.books.NetworkBook
 import com.rinne.shared.network.model.books.NetworkBookAnnotation
 import com.rinne.shared.network.model.books.NetworkBookFolder
+import com.rinne.shared.network.model.comments.NetworkNoteComment
+import com.rinne.shared.network.model.comments.NetworkNoteCommentThread
 import com.rinne.shared.network.model.memorizer.NetworkMemorizerCard
 import com.rinne.shared.network.model.memorizer.NetworkMemorizerAccountSettings
 import com.rinne.shared.network.model.memorizer.NetworkMemorizerFolder
@@ -58,6 +60,8 @@ class SyncFieldsTest {
         assertFieldsOf(NetworkTaskFilter.serializer().descriptor, NetworkTaskFilter.Fields.All)
         assertFieldsOf(NetworkTag.serializer().descriptor, NetworkTag.Fields.All)
         assertFieldsOf(NetworkTagItem.serializer().descriptor, NetworkTagItem.Fields.All)
+        assertFieldsOf(NetworkNoteCommentThread.serializer().descriptor, NetworkNoteCommentThread.Fields.All)
+        assertFieldsOf(NetworkNoteComment.serializer().descriptor, NetworkNoteComment.Fields.All)
         assertFieldsOf(NetworkBook.serializer().descriptor, NetworkBook.Fields.All)
         assertFieldsOf(NetworkBookFolder.serializer().descriptor, NetworkBookFolder.Fields.All)
         assertFieldsOf(NetworkBookAnnotation.serializer().descriptor, NetworkBookAnnotation.Fields.All)
