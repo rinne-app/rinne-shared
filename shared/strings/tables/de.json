@@ -391,6 +391,8 @@
     "notesTableClearCells": "Zellen leeren",
     "notesTableSizeHolder": "%1$d × %2$d",
     "notesTableSizeTitle": "Tabelle einfügen",
+    "notesCommentNotFoundTitle": "Kommentar nicht gefunden",
+    "notesCommentNotFoundMessage": "Er wurde gelöscht, vielleicht auf einem anderen Gerät.",
     "notesDeleteVoiceNote": "Sprachnotiz löschen",
     "notesDeleteVoiceNoteTitle": "Sprachnotiz löschen?",
     "notesDeleteVoiceNoteMessage": "Die Aufnahme und ihr Transkript werden auf allen Geräten gelöscht.",

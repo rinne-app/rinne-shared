@@ -391,6 +391,8 @@
     "notesTableClearCells": "Clear cells",
     "notesTableSizeHolder": "%1$d × %2$d",
     "notesTableSizeTitle": "Insert table",
+    "notesCommentNotFoundTitle": "Comment not found",
+    "notesCommentNotFoundMessage": "It was deleted, maybe on another device.",
     "notesDeleteVoiceNote": "Delete voice note",
     "notesDeleteVoiceNoteTitle": "Delete the voice note?",
     "notesDeleteVoiceNoteMessage": "The recording and its transcript are deleted on every device.",
