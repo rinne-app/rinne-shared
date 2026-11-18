@@ -98,7 +98,8 @@ data class NetworkMemorizerSet(
 /**
  * One field of a set's cards: [id] (unique in the set; the keys of a card's `values`), [name], [hint]
  * (the placeholder), [kind] (one of [Kinds]), [side] (one of [Sides]: where practice shows it),
- * [required], [aiFills] (filled by the card's AI button), [prompt] (the AI instruction; empty = from the name).
+ * [required], [aiFills] (filled by the card's AI button), [prompt] (the AI instruction; empty = from the name),
+ * [reverse] (shown on the question side of a reverse card; `back` always is).
  */
 @Serializable
 data class NetworkMemorizerField(
@@ -110,6 +111,7 @@ data class NetworkMemorizerField(
     val required: Boolean = false,
     val aiFills: Boolean = false,
     val prompt: String = "",
+    val reverse: Boolean = false,
 ) {
     /** The fields every set has: renamable, never removed, always required. */
     object Ids {

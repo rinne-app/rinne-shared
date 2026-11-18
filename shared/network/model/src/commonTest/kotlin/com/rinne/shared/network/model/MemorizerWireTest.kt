@@ -32,11 +32,19 @@ class MemorizerWireTest {
         assertEquals(set, json.decodeFromString(NetworkMemorizerSet.serializer(), json.encodeToString(NetworkMemorizerSet.serializer(), set)))
     }
 
+    @Test fun `a field's reverse switch round-trips`() {
+        val field = NetworkMemorizerField(id = "example", name = "Example", reverse = true)
+        val encoded = json.encodeToString(NetworkMemorizerField.serializer(), field)
+        assertEquals(true, encoded.contains("\"reverse\":true"))
+        assertEquals(field, json.decodeFromString(NetworkMemorizerField.serializer(), encoded))
+    }
+
     @Test fun `a field decodes with its defaults and fields and settings round-trip as sync fields`() {
         val field = json.decodeFromString(NetworkMemorizerField.serializer(), """{"id":"example","name":"Example"}""")
         assertEquals(NetworkMemorizerField.Kinds.Text, field.kind)
         assertEquals(NetworkMemorizerField.Sides.Back, field.side)
         assertFalse(field.required)
+        assertFalse(field.reverse)
         val settings = NetworkMemorizerSettings(newPerDay = 10, retention = 0.95, learningSteps = listOf(60, 600))
         val fields = syncFields {
             set(NetworkMemorizerSet.Fields.CardFields, listOf(field))
