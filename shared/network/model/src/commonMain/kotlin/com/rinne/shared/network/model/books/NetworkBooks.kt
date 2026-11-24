@@ -2,6 +2,7 @@ package com.rinne.shared.network.model.books
 
 import com.rinne.libraries.date.time.core.RinneTimestamp
 import com.rinne.shared.network.model.sync.SyncField
+import com.rinne.shared.network.model.tasks.NetworkTaskStatus
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.nullable
@@ -175,8 +176,12 @@ data class NetworkBookFolder(
 /**
  * A highlight or a bookmark in a book, as synced. `bookId` and `kind` are create-only; writable fields:
  * `start`/`end` (engine locators; a bookmark has no `end`), `text` (the quote, a bookmark's excerpt),
- * `note`, `color`, `style`, `chapter` (its chapter's title when made), `progress` (where it is in the
- * book, 0…1, for ordering without a layout).
+ * `note` (a bookmark's description), `color` (a highlight one of [Colors.Highlights], a bookmark any of
+ * [Colors.All]), `style`, `chapter` (its chapter's title when made), `progress` (where it is in the
+ * book, 0…1, for ordering without a layout), `status` (a highlight's: a key of
+ * [NetworkBookHighlightStatus.BuiltIn] or a custom status's id; `null` = New; always `null` on a
+ * bookmark), `pinned` (in the pinned quotes), `title` (a bookmark's; `null` on a highlight). Fields an
+ * older app doesn't send keep their defaults.
  */
 @Serializable
 data class NetworkBookAnnotation(
@@ -193,9 +198,15 @@ data class NetworkBookAnnotation(
     val style: String = Styles.Highlight,
     val chapter: String? = null,
     val progress: Double = 0.0,
+    val status: String? = null,
+    val pinned: Boolean = false,
+    val title: String? = null,
 ) {
     companion object {
         const val SyncType = "book_annotation"
+
+        /** The longest bookmark title. */
+        const val TitleMaxLength = 200
     }
 
     /** The writable fields: the keys of push `fields` ([BookId] and [Kind] create-only). */
@@ -210,8 +221,11 @@ data class NetworkBookAnnotation(
         val Style = SyncField("style", String.serializer())
         val Chapter = SyncField("chapter", String.serializer().nullable)
         val Progress = SyncField("progress", Double.serializer())
+        val Status = SyncField("status", String.serializer().nullable)
+        val Pinned = SyncField("pinned", Boolean.serializer())
+        val Title = SyncField("title", String.serializer().nullable)
 
-        val All: List<SyncField<*>> = listOf(BookId, Kind, Start, End, Text, Note, Color, Style, Chapter, Progress)
+        val All: List<SyncField<*>> = listOf(BookId, Kind, Start, End, Text, Note, Color, Style, Chapter, Progress, Status, Pinned, Title)
     }
 
     object Kinds {
@@ -227,7 +241,14 @@ data class NetworkBookAnnotation(
         const val Blue = "blue"
         const val Pink = "pink"
 
-        val All: List<String> = listOf(Yellow, Green, Blue, Pink)
+        /** Bookmarks' default (the fore-edge tabs' orange); never a highlight's. */
+        const val Orange = "orange"
+
+        /** What a highlight can have. */
+        val Highlights: List<String> = listOf(Yellow, Green, Blue, Pink)
+
+        /** What a bookmark can have. */
+        val All: List<String> = Highlights + Orange
     }
 
     object Styles {
@@ -236,5 +257,49 @@ data class NetworkBookAnnotation(
         const val Squiggly = "squiggly"
 
         val All: List<String> = listOf(Highlight, Underline, Squiggly)
+    }
+}
+
+/**
+ * A highlight status the user made, as synced (`book_highlight_status`). Writable fields: `name` (1…
+ * [NameMaxLength] characters, trimmed), `color` (one of `NetworkTaskStatus.Colors`, the status dots),
+ * `position` (its place after the built-in statuses: a key compared as text, as a folder's). The built-in
+ * statuses ([BuiltIn]) are part of the apps, not synced; a highlight names them by their key. Deleting
+ * one changes no highlight: the apps show a highlight whose status is gone as New, and the device that
+ * deletes it moves its highlights itself.
+ */
+@Serializable
+data class NetworkBookHighlightStatus(
+    val id: String,
+    val name: String,
+    val createdAt: RinneTimestamp,
+    val updatedAt: RinneTimestamp,
+    val color: String = NetworkTaskStatus.Colors.Primary,
+    val position: String? = null,
+) {
+    companion object {
+        const val SyncType = "book_highlight_status"
+
+        const val NameMaxLength = 40
+    }
+
+    /** The writable fields: the keys of push `fields`. */
+    object Fields {
+        val Name = SyncField("name", String.serializer())
+        val Color = SyncField("color", String.serializer())
+        val Position = SyncField("position", String.serializer().nullable)
+
+        val All: List<SyncField<*>> = listOf(Name, Color, Position)
+    }
+
+    /** The keys of the built-in highlight statuses, in their fixed order; [New] is a highlight's without one. */
+    object BuiltIn {
+        const val New = "new"
+        const val Reread = "reread"
+        const val ToUse = "to_use"
+        const val Used = "used"
+        const val Archived = "archived"
+
+        val All: List<String> = listOf(New, Reread, ToUse, Used, Archived)
     }
 }
